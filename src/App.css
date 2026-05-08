@@ -559,7 +559,7 @@ body {
   display: flex;
   align-items: center;
   gap: 1.5rem;
-  max-width: 860px;
+  max-width: 1060px;
   margin: 0 auto;
 }
 
@@ -592,12 +592,12 @@ body {
 .cert-slide {
   flex: 1;
   display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 2rem;
+  grid-template-columns: 280px 1fr;
+  gap: 2.25rem;
   background: var(--bg-primary);
   border: 1px solid var(--border);
   border-radius: 24px;
-  padding: 2rem;
+  padding: 2.5rem;
   box-shadow: var(--shadow-sm);
   animation: certFadeIn .35s ease;
 }
@@ -616,7 +616,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 160px;
+  min-height: 210px;
 }
 
 .cert-img {
@@ -635,7 +635,7 @@ body {
   padding: 1.5rem;
 }
 
-.cert-placeholder-icon  { font-size: 2.8rem; line-height: 1; }
+.cert-placeholder-icon  { font-size: 3.2rem; line-height: 1; }
 .cert-placeholder-label { font-size: .8rem; color: var(--text-light); font-weight: 500; text-align: center; }
 
 /* Right column – info */

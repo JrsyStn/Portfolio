@@ -8,37 +8,34 @@ import './App.css'
 // Change the `imageSize` value (in px) for each skill to resize its icon.
 // ─────────────────────────────────────────────
 const skillCards = [
-  { name: 'React',             image: new URL('./assets/react.svg',   import.meta.url).href, imageSize: 40 },
-  { name: 'TypeScript',        image: new URL('./assets/ts.png',      import.meta.url).href, imageSize: 36 },
-  { name: 'Tailwind CSS',      image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Next.js',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Vite',              image: new URL('./assets/vite.svg',    import.meta.url).href, imageSize: 36 },
-  { name: 'Node.js',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Python',            image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Express',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'FastAPI',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'PostgreSQL',        image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Git',               image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Docker',            image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'AWS',               image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Firebase',          image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'GraphQL',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'UI/UX Design',      image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Figma',             image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'React', image: new URL('./assets/react.svg', import.meta.url).href, imageSize: 40 },
+  { name: 'TypeScript', image: new URL('./assets/ts.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Tailwind CSS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Next.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Vite', image: new URL('./assets/vite.svg', import.meta.url).href, imageSize: 36 },
+  { name: 'Node.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Python', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Express', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'FastAPI', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'PostgreSQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Git', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Docker', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'AWS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Firebase', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'GraphQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'UI/UX Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Figma', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
   { name: 'Responsive Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'Accessibility',     image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'Accessibility', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
 ]
 
 // ─────────────────────────────────────────────
 // ABOUT – bold keywords shown on the left column
 // ─────────────────────────────────────────────
 const aboutKeywords = [
-  { label: 'Dedicated',   emoji: '🎯' },
-  { label: 'Creative',    emoji: '🎨' },
-  { label: 'Passionate',  emoji: '🔥' },
-  { label: 'Reliable',    emoji: '🤝' },
-  { label: 'Innovative',  emoji: '💡' },
-  { label: 'Detail-Oriented', emoji: '🔍' },
+  { label: 'Dedicated' },
+  { label: 'Creative' },
+  { label: 'Detail-Oriented' }
 ]
 
 // ─────────────────────────────────────────────
@@ -106,8 +103,8 @@ const certificates = [
 
 function App() {
   const [activeSection, setActiveSection] = useState('home')
-  const [theme, setTheme]                 = useState('light')
-  const [certIndex, setCertIndex]         = useState(0)
+  const [theme, setTheme] = useState('light')
+  const [certIndex, setCertIndex] = useState(0)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -172,12 +169,12 @@ function App() {
         <div className="nav-container">
           <div className="logo"><span className="logo-text">Jersey</span></div>
           <ul className="nav-links">
-            <li><a href="#home"         onClick={() => setActiveSection('home')}         className={activeSection === 'home'         ? 'active' : ''}>Home</a></li>
-            <li><a href="#about"        onClick={() => setActiveSection('about')}        className={activeSection === 'about'        ? 'active' : ''}>About</a></li>
-            <li><a href="#projects"     onClick={() => setActiveSection('projects')}     className={activeSection === 'projects'     ? 'active' : ''}>Projects</a></li>
-            <li><a href="#skills"       onClick={() => setActiveSection('skills')}       className={activeSection === 'skills'       ? 'active' : ''}>Skills</a></li>
+            <li><a href="#home" onClick={() => setActiveSection('home')} className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
+            <li><a href="#about" onClick={() => setActiveSection('about')} className={activeSection === 'about' ? 'active' : ''}>About</a></li>
+            <li><a href="#projects" onClick={() => setActiveSection('projects')} className={activeSection === 'projects' ? 'active' : ''}>Projects</a></li>
+            <li><a href="#skills" onClick={() => setActiveSection('skills')} className={activeSection === 'skills' ? 'active' : ''}>Skills</a></li>
             <li><a href="#certificates" onClick={() => setActiveSection('certificates')} className={activeSection === 'certificates' ? 'active' : ''}>Certificates</a></li>
-            <li><a href="#contact"      onClick={() => setActiveSection('contact')}      className={activeSection === 'contact'      ? 'active' : ''}>Contact</a></li>
+            <li><a href="#contact" onClick={() => setActiveSection('contact')} className={activeSection === 'contact' ? 'active' : ''}>Contact</a></li>
           </ul>
           <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
             {theme === 'light' ? '🌙' : '☀️'}
@@ -194,7 +191,7 @@ function App() {
             <p className="hero-subtitle">Designer &amp; Developer</p>
             <div className="hero-buttons">
               <a href="#projects" className="btn btn-primary">View My Work</a>
-              <a href="#contact"  className="btn btn-secondary">Get In Touch</a>
+              <a href="#contact" className="btn btn-secondary">Get In Touch</a>
             </div>
           </div>
           <div className="hero-image">
@@ -206,7 +203,7 @@ function App() {
       {/* ── About ── */}
       <section id="about" className="about-section">
         <div className="container">
-          <h2 className="section-title">About Me</h2>
+
 
           {/* Two-column: bold keywords | short description */}
           <div className="about-intro">
@@ -214,26 +211,18 @@ function App() {
             <div className="about-keywords">
               {aboutKeywords.map(kw => (
                 <div key={kw.label} className="keyword-pill">
-                  <span className="keyword-emoji">{kw.emoji}</span>
                   <span className="keyword-label">{kw.label}</span>
                 </div>
               ))}
             </div>
 
-            {/* Right – short description */}
+            {/* Right – summary */}
             <div className="about-description">
               <p className="about-desc-text">
-                I'm a <strong>full-stack developer & designer</strong> from the Philippines with a
-                passion for crafting clean, purposeful digital experiences.
-              </p>
-              <p className="about-desc-text">
-                I thrive at the intersection of <strong>design and code</strong> — turning ideas into
-                polished, user-friendly products using modern technologies like React, TypeScript,
-                Flutter, and Firebase.
-              </p>
-              <p className="about-desc-text">
-                When I'm not building things, I'm exploring new tech, contributing to open-source,
-                or helping others level up their skills.
+                I'm a <strong>full-stack developer &amp; designer</strong> from the Philippines passionate
+                about crafting clean, user-friendly digital experiences. I work at the intersection of
+                <strong> design and code</strong>, building polished products with React, TypeScript,
+                Flutter, and Firebase — and I'm always exploring new tech to keep growing.
               </p>
             </div>
           </div>
