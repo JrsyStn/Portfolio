@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import profilePic from './assets/me.png'
 import './App.css'
 
 function App() {
@@ -80,16 +81,27 @@ function App() {
       {/* Hero Section */}
       <section id="home" className="hero-section">
         <div className="hero-content">
-          <div className="hero-text">
-            <h1 className="hero-title">Hi, I'm Jersey Sistona</h1>
-            <p className="hero-subtitle">Designer</p>
-            <div className="hero-buttons">
-              <button className="btn btn-primary">View My Work</button>
-              <button className="btn btn-secondary">Download CV</button>
+          <div className="hero-side hero-left">
+            <div className="hero-intro">
+              <p className="hero-label">Hello, I'm</p>
+              <h1 className="hero-title">Jersey Sistona</h1>
+              <p className="hero-description">
+                Creative Designer building immersive digital brands and polished user experiences.
+              </p>
             </div>
           </div>
+
           <div className="hero-image">
-            <div className="avatar"></div>
+            <img src={profilePic} alt="Jersey Sistona" className="avatar" />
+          </div>
+
+          <div className="hero-side hero-right">
+            <div className="hero-badge">
+              <span className="hero-role">Designer</span>
+              <p className="hero-detail">
+                A modern visual creator focused on responsive interfaces, brand systems, and pixel-perfect detail.
+              </p>
+            </div>
           </div>
         </div>
       </section>
