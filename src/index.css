@@ -49,6 +49,7 @@ button {
 code {
   font-family: 'Courier New', Courier, monospace;
 }
+pre {
   display: inline-flex;
   border-radius: 4px;
   color: var(--text-h);
