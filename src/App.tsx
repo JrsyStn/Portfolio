@@ -8,30 +8,44 @@ import './App.css'
 // Change the `imageSize` value (in px) for each skill to resize its icon.
 // ─────────────────────────────────────────────
 const skillCards = [
-  { name: 'React', image: new URL('./assets/react.svg', import.meta.url).href, imageSize: 40 },
-  { name: 'TypeScript', image: new URL('./assets/ts.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Tailwind CSS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Next.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Vite', image: new URL('./assets/vite.svg', import.meta.url).href, imageSize: 36 },
-  { name: 'Node.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Python', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Express', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'FastAPI', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'PostgreSQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Git', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Docker', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'AWS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Firebase', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'GraphQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'UI/UX Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Figma', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'React',             image: new URL('./assets/react.svg',   import.meta.url).href, imageSize: 40 },
+  { name: 'TypeScript',        image: new URL('./assets/ts.png',      import.meta.url).href, imageSize: 36 },
+  { name: 'Tailwind CSS',      image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Next.js',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Vite',              image: new URL('./assets/vite.svg',    import.meta.url).href, imageSize: 36 },
+  { name: 'Node.js',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Python',            image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Express',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'FastAPI',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'PostgreSQL',        image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Git',               image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Docker',            image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'AWS',               image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Firebase',          image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'GraphQL',           image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'UI/UX Design',      image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Figma',             image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
   { name: 'Responsive Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'Accessibility', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'Accessibility',     image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+]
+
+// ─────────────────────────────────────────────
+// ABOUT – bold keywords shown on the left column
+// ─────────────────────────────────────────────
+const aboutKeywords = [
+  { label: 'Dedicated',   emoji: '🎯' },
+  { label: 'Creative',    emoji: '🎨' },
+  { label: 'Passionate',  emoji: '🔥' },
+  { label: 'Reliable',    emoji: '🤝' },
+  { label: 'Innovative',  emoji: '💡' },
+  { label: 'Detail-Oriented', emoji: '🔍' },
 ]
 
 // ─────────────────────────────────────────────
 // CERTIFICATES DATA
 // Add or remove certificates here.
+// Set `credlyLink` to your real Credly certificate URL.
+// Set `image` to a screenshot/preview of your certificate (or leave as '').
 // ─────────────────────────────────────────────
 const certificates = [
   {
@@ -39,54 +53,61 @@ const certificates = [
     title: 'Responsive Web Design',
     issuer: 'freeCodeCamp',
     date: '2024',
-    icon: '🏅',
-    link: '#',
+    description: 'Covers HTML, CSS, flexbox, CSS grid, and accessible responsive design principles.',
+    image: '',                        // ← replace with: new URL('./assets/cert1.png', import.meta.url).href
+    credlyLink: 'https://www.credly.com/users/jersey-sistona', // ← replace with your actual Credly URL
   },
   {
     id: 2,
     title: 'JavaScript Algorithms & Data Structures',
     issuer: 'freeCodeCamp',
     date: '2024',
-    icon: '🏅',
-    link: '#',
+    description: 'ES6+, regular expressions, OOP, functional programming, and algorithm scripting.',
+    image: '',
+    credlyLink: 'https://www.credly.com/users/jersey-sistona',
   },
   {
     id: 3,
     title: 'React – The Complete Guide',
     issuer: 'Udemy',
     date: '2024',
-    icon: '🎓',
-    link: '#',
+    description: 'React hooks, context, Redux, Next.js, testing, and real-world project building.',
+    image: '',
+    credlyLink: 'https://www.credly.com/users/jersey-sistona',
   },
   {
     id: 4,
     title: 'Google UX Design Certificate',
     issuer: 'Coursera / Google',
     date: '2025',
-    icon: '🎓',
-    link: '#',
+    description: 'End-to-end UX design process: empathize, define, ideate, prototype, and test.',
+    image: '',
+    credlyLink: 'https://www.credly.com/users/jersey-sistona',
   },
   {
     id: 5,
     title: 'AWS Cloud Practitioner Essentials',
     issuer: 'Amazon Web Services',
     date: '2025',
-    icon: '☁️',
-    link: '#',
+    description: 'AWS core services, security, architecture, pricing, and support fundamentals.',
+    image: '',
+    credlyLink: 'https://www.credly.com/users/jersey-sistona',
   },
   {
     id: 6,
     title: 'Flutter & Dart – The Complete Guide',
     issuer: 'Udemy',
     date: '2023',
-    icon: '📱',
-    link: '#',
+    description: 'Cross-platform mobile development with Flutter, state management, and Firebase.',
+    image: '',
+    credlyLink: 'https://www.credly.com/users/jersey-sistona',
   },
 ]
 
 function App() {
   const [activeSection, setActiveSection] = useState('home')
-  const [theme, setTheme] = useState('light')
+  const [theme, setTheme]                 = useState('light')
+  const [certIndex, setCertIndex]         = useState(0)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -100,6 +121,11 @@ function App() {
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
   }
+
+  const prevCert = () => setCertIndex(i => (i - 1 + certificates.length) % certificates.length)
+  const nextCert = () => setCertIndex(i => (i + 1) % certificates.length)
+
+  const activeCert = certificates[certIndex]
 
   const projects = [
     {
@@ -138,27 +164,20 @@ function App() {
 
   const sliderRef = useRef<HTMLDivElement | null>(null)
 
-  const scrollProjects = (direction: number) => {
-    if (!sliderRef.current) return
-    const scrollAmount = sliderRef.current.clientWidth * 0.9
-    sliderRef.current.scrollBy({ left: direction * scrollAmount, behavior: 'smooth' })
-  }
-
   return (
     <div className="app">
-      {/* Navigation */}
+
+      {/* ── Navigation ── */}
       <nav className="navbar">
         <div className="nav-container">
-          <div className="logo">
-            <span className="logo-text">Jersey</span>
-          </div>
+          <div className="logo"><span className="logo-text">Jersey</span></div>
           <ul className="nav-links">
-            <li><a href="#home" onClick={() => setActiveSection('home')} className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
-            <li><a href="#about" onClick={() => setActiveSection('about')} className={activeSection === 'about' ? 'active' : ''}>About</a></li>
-            <li><a href="#projects" onClick={() => setActiveSection('projects')} className={activeSection === 'projects' ? 'active' : ''}>Projects</a></li>
-            <li><a href="#skills" onClick={() => setActiveSection('skills')} className={activeSection === 'skills' ? 'active' : ''}>Skills</a></li>
+            <li><a href="#home"         onClick={() => setActiveSection('home')}         className={activeSection === 'home'         ? 'active' : ''}>Home</a></li>
+            <li><a href="#about"        onClick={() => setActiveSection('about')}        className={activeSection === 'about'        ? 'active' : ''}>About</a></li>
+            <li><a href="#projects"     onClick={() => setActiveSection('projects')}     className={activeSection === 'projects'     ? 'active' : ''}>Projects</a></li>
+            <li><a href="#skills"       onClick={() => setActiveSection('skills')}       className={activeSection === 'skills'       ? 'active' : ''}>Skills</a></li>
             <li><a href="#certificates" onClick={() => setActiveSection('certificates')} className={activeSection === 'certificates' ? 'active' : ''}>Certificates</a></li>
-            <li><a href="#contact" onClick={() => setActiveSection('contact')} className={activeSection === 'contact' ? 'active' : ''}>Contact</a></li>
+            <li><a href="#contact"      onClick={() => setActiveSection('contact')}      className={activeSection === 'contact'      ? 'active' : ''}>Contact</a></li>
           </ul>
           <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
             {theme === 'light' ? '🌙' : '☀️'}
@@ -166,59 +185,56 @@ function App() {
         </div>
       </nav>
 
-      {/* ── Hero Section ── */}
+      {/* ── Hero ── */}
       <section id="home" className="hero-section">
         <div className="hero-content">
-          {/* Left – intro text */}
           <div className="hero-text">
             <p className="hero-label">Welcome to my portfolio</p>
             <h1 className="hero-title">Hi, I'm<br />Jersey Sistona</h1>
             <p className="hero-subtitle">Designer &amp; Developer</p>
             <div className="hero-buttons">
               <a href="#projects" className="btn btn-primary">View My Work</a>
-              <a href="#contact" className="btn btn-secondary">Get In Touch</a>
+              <a href="#contact"  className="btn btn-secondary">Get In Touch</a>
             </div>
           </div>
-
-          {/* Right – profile image (offset to the right side) */}
           <div className="hero-image">
             <img className="avatar-image" src={profileImage} alt="Jersey Sistona" />
           </div>
         </div>
       </section>
 
-      {/* ── About Section ── */}
+      {/* ── About ── */}
       <section id="about" className="about-section">
         <div className="container">
           <h2 className="section-title">About Me</h2>
-          <div className="about-content">
-            <div className="about-text">
-              <p>
-                I'm a passionate full-stack developer with 5+ years of experience creating innovative web solutions.
-                I specialize in React, TypeScript, and modern web technologies.
-              </p>
-              <p>
-                My journey in web development started with a curiosity about how things work online.
-                Today, I'm committed to building user-centric applications that solve real-world problems.
-              </p>
-              <p>
-                When I'm not coding, you can find me exploring new technologies, contributing to open source,
-                or sharing knowledge with the developer community.
-              </p>
+
+          {/* Two-column: bold keywords | short description */}
+          <div className="about-intro">
+            {/* Left – bold keyword pills */}
+            <div className="about-keywords">
+              {aboutKeywords.map(kw => (
+                <div key={kw.label} className="keyword-pill">
+                  <span className="keyword-emoji">{kw.emoji}</span>
+                  <span className="keyword-label">{kw.label}</span>
+                </div>
+              ))}
             </div>
-            <div className="about-stats">
-              <div className="stat">
-                <h3>50+</h3>
-                <p>Projects Completed</p>
-              </div>
-              <div className="stat">
-                <h3>30+</h3>
-                <p>Happy Clients</p>
-              </div>
-              <div className="stat">
-                <h3>5+</h3>
-                <p>Years Experience</p>
-              </div>
+
+            {/* Right – short description */}
+            <div className="about-description">
+              <p className="about-desc-text">
+                I'm a <strong>full-stack developer & designer</strong> from the Philippines with a
+                passion for crafting clean, purposeful digital experiences.
+              </p>
+              <p className="about-desc-text">
+                I thrive at the intersection of <strong>design and code</strong> — turning ideas into
+                polished, user-friendly products using modern technologies like React, TypeScript,
+                Flutter, and Firebase.
+              </p>
+              <p className="about-desc-text">
+                When I'm not building things, I'm exploring new tech, contributing to open-source,
+                or helping others level up their skills.
+              </p>
             </div>
           </div>
 
@@ -246,7 +262,7 @@ function App() {
         </div>
       </section>
 
-      {/* ── Projects Section ── */}
+      {/* ── Projects ── */}
       <section id="projects" className="projects-section">
         <div className="container">
           <h2 className="section-title">Featured Projects</h2>
@@ -280,32 +296,69 @@ function App() {
         </div>
       </section>
 
-      {/* ── Certificates Section ── */}
+      {/* ── Certificates – single-item slider ── */}
       <section id="certificates" className="certificates-section">
         <div className="container">
           <h2 className="section-title">Certificates</h2>
-          <div className="certs-grid">
-            {certificates.map((cert) => (
-              <a
-                key={cert.id}
-                href={cert.link}
-                className="cert-card"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="cert-icon">{cert.icon}</div>
-                <div className="cert-body">
-                  <h4 className="cert-title">{cert.title}</h4>
-                  <p className="cert-issuer">{cert.issuer}</p>
-                  <span className="cert-date">{cert.date}</span>
-                </div>
-              </a>
+
+          <div className="cert-slider">
+            {/* Prev arrow */}
+            <button className="cert-arrow cert-arrow-left" onClick={prevCert} aria-label="Previous certificate">
+              ←
+            </button>
+
+            {/* Card */}
+            <div className="cert-slide" key={activeCert.id}>
+              {/* Certificate image (or placeholder if no image) */}
+              <div className="cert-preview">
+                {activeCert.image ? (
+                  <img src={activeCert.image} alt={activeCert.title} className="cert-img" />
+                ) : (
+                  <div className="cert-placeholder">
+                    <span className="cert-placeholder-icon">🏅</span>
+                    <span className="cert-placeholder-label">Certificate Preview</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Info */}
+              <div className="cert-info">
+                <p className="cert-counter">{certIndex + 1} / {certificates.length}</p>
+                <h3 className="cert-slide-title">{activeCert.title}</h3>
+                <p className="cert-slide-issuer">{activeCert.issuer} · {activeCert.date}</p>
+                <p className="cert-slide-desc">{activeCert.description}</p>
+                <a
+                  href={activeCert.credlyLink}
+                  className="cert-credly-btn"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  View on Credly →
+                </a>
+              </div>
+            </div>
+
+            {/* Next arrow */}
+            <button className="cert-arrow cert-arrow-right" onClick={nextCert} aria-label="Next certificate">
+              →
+            </button>
+          </div>
+
+          {/* Dot indicators */}
+          <div className="cert-dots">
+            {certificates.map((_, i) => (
+              <button
+                key={i}
+                className={`cert-dot${i === certIndex ? ' cert-dot-active' : ''}`}
+                onClick={() => setCertIndex(i)}
+                aria-label={`Go to certificate ${i + 1}`}
+              />
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── Contact Section ── */}
+      {/* ── Contact ── */}
       <section id="contact" className="contact-section">
         <div className="container">
           <h2 className="section-title">Get In Touch</h2>
