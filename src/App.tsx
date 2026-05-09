@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, useCallback } from 'react'
 import profileImage from './assets/profile.png'
 import projectImage from './assets/hero.png'
 import './App.css'
@@ -211,6 +211,7 @@ function App() {
   const [theme, setTheme] = useState('light')
   const [certIndex, setCertIndex] = useState(0)
   const [activeCategoryId, setActiveCategoryId] = useState(projectCategories[0].id)
+  const [menuOpen, setMenuOpen] = useState(false)
   // trackIndex always lives in the middle copy of the 3-copy carousel array.
   // Middle copy starts at index n (projects.length of the first category).
   const [trackIndex, setTrackIndex] = useState(projectCategories[0].projects.length)
@@ -220,6 +221,7 @@ function App() {
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
+  const touchStartX = useRef<number | null>(null)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -244,6 +246,38 @@ function App() {
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
   }
+
+  // Close menu on resize to desktop
+  useEffect(() => {
+    const onResize = () => { if (window.innerWidth > 768) setMenuOpen(false) }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
+
+  // Prevent body scroll when menu is open
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
+  const handleNavClick = (section: string) => {
+    setActiveSection(section)
+    setMenuOpen(false)
+  }
+
+  // Touch swipe handlers for project carousel
+  const onTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }, [])
+
+  const onTouchEnd = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - touchStartX.current
+    touchStartX.current = null
+    if (Math.abs(dx) < 40) return  // ignore tiny taps
+    if (dx < 0) goNext()
+    else goPrev()
+  }, [isAnimating])  // eslint-disable-line
 
   const prevCert = () => setCertIndex(i => (i - 1 + certificates.length) % certificates.length)
   const nextCert = () => setCertIndex(i => (i + 1) % certificates.length)
@@ -343,19 +377,48 @@ function App() {
       <nav className="navbar">
         <div className="nav-container">
           <div className="logo"><span className="logo-text">Jersey</span></div>
+
+          {/* Desktop nav links */}
           <ul className="nav-links">
-            <li><a href="#home" onClick={() => setActiveSection('home')} className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
-            <li><a href="#about" onClick={() => setActiveSection('about')} className={activeSection === 'about' ? 'active' : ''}>About</a></li>
-            <li><a href="#projects" onClick={() => setActiveSection('projects')} className={activeSection === 'projects' ? 'active' : ''}>Projects</a></li>
-            <li><a href="#skills" onClick={() => setActiveSection('skills')} className={activeSection === 'skills' ? 'active' : ''}>Skills</a></li>
-            <li><a href="#certificates" onClick={() => setActiveSection('certificates')} className={activeSection === 'certificates' ? 'active' : ''}>Certificates</a></li>
-            <li><a href="#contact" onClick={() => setActiveSection('contact')} className={activeSection === 'contact' ? 'active' : ''}>Contact</a></li>
+            <li><a href="#home" onClick={() => handleNavClick('home')} className={activeSection === 'home' ? 'active' : ''}>Home</a></li>
+            <li><a href="#about" onClick={() => handleNavClick('about')} className={activeSection === 'about' ? 'active' : ''}>About</a></li>
+            <li><a href="#projects" onClick={() => handleNavClick('projects')} className={activeSection === 'projects' ? 'active' : ''}>Projects</a></li>
+            <li><a href="#skills" onClick={() => handleNavClick('skills')} className={activeSection === 'skills' ? 'active' : ''}>Skills</a></li>
+            <li><a href="#certificates" onClick={() => handleNavClick('certificates')} className={activeSection === 'certificates' ? 'active' : ''}>Certificates</a></li>
+            <li><a href="#contact" onClick={() => handleNavClick('contact')} className={activeSection === 'contact' ? 'active' : ''}>Contact</a></li>
           </ul>
-          <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
-            {theme === 'light' ? '🌙' : '☀️'}
-          </button>
+
+          <div className="nav-right">
+            <button className="theme-toggle" onClick={toggleTheme} title={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}>
+              {theme === 'light' ? '🌙' : '☀️'}
+            </button>
+            {/* Hamburger – visible only on mobile */}
+            <button
+              id="hamburger-btn"
+              className={`hamburger${menuOpen ? ' hamburger-open' : ''}`}
+              onClick={() => setMenuOpen(o => !o)}
+              aria-label="Toggle navigation menu"
+              aria-expanded={menuOpen}
+            >
+              <span className="ham-line" />
+              <span className="ham-line" />
+              <span className="ham-line" />
+            </button>
+          </div>
         </div>
       </nav>
+
+      {/* ── Mobile menu overlay ── */}
+      <div className={`mobile-nav-overlay${menuOpen ? ' mobile-nav-open' : ''}`} onClick={() => setMenuOpen(false)} />
+      <div className={`mobile-nav${menuOpen ? ' mobile-nav-open' : ''}`}>
+        <ul className="mobile-nav-links">
+          {[['home','Home'],['about','About'],['projects','Projects'],['skills','Skills'],['certificates','Certificates'],['contact','Contact']].map(([id, label]) => (
+            <li key={id}>
+              <a href={`#${id}`} onClick={() => handleNavClick(id)} className={activeSection === id ? 'active' : ''}>{label}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
 
       {/* ── Hero ── */}
       <section id="home" className="hero-section">
@@ -458,6 +521,8 @@ function App() {
             ref={trackRef}
             style={{ transform: `translateX(${pTrackX}px)` }}
             onTransitionEnd={handleTransitionEnd}
+            onTouchStart={onTouchStart}
+            onTouchEnd={onTouchEnd}
           >
             {trackItems.map((project, idx) => {
               const isActive = idx === trackIndex
