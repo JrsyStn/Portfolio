@@ -528,15 +528,10 @@ body {
 .project-track {
   display: flex;
   gap: 24px;
-  transition: transform .5s cubic-bezier(.25,.46,.45,.94);
+  transition: transform .6s ease-out;
   will-change: transform;
   align-items: stretch;
   touch-action: pan-y;
-}
-
-/* During a silent jump: kill ALL child slide transitions so the snap is invisible */
-.project-track.instant .project-slide {
-  transition: none !important;
 }
 
 /* Every card in the track */

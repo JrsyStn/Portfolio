@@ -212,9 +212,8 @@ function App() {
   const [certIndex, setCertIndex] = useState(0)
   const [activeCategoryId, setActiveCategoryId] = useState(projectCategories[0].id)
   const [menuOpen, setMenuOpen] = useState(false)
-  // trackIndex always lives in the middle copy of the 3-copy carousel array.
-  // Middle copy starts at index n (projects.length of the first category).
-  const [trackIndex, setTrackIndex] = useState(projectCategories[0].projects.length)
+  // Linear (non-looping) index: 0 to n-1
+  const [currentIndex, setCurrentIndex] = useState(0)
   const [isAnimating, setIsAnimating] = useState(false)
   const [isCategorySwitching, setIsCategorySwitching] = useState(false)
   const [sectionWidth, setSectionWidth] = useState(0)
@@ -223,11 +222,6 @@ function App() {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
   const certTouchStartX = useRef<number | null>(null)
-  const trackIndexRef = useRef<number>(projectCategories[0].projects.length)
-
-  useEffect(() => {
-    trackIndexRef.current = trackIndex
-  }, [trackIndex])
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -306,103 +300,55 @@ function App() {
   // Derive the active category's projects
   const activeCategory = projectCategories.find(c => c.id === activeCategoryId) ?? projectCategories[0]
   const projects = activeCategory.projects
-
-  // ─ 3-copy infinite carousel ─────────────────────────────────────────
-  // trackItems = [copy1, copy2, copy3]  (3 full repetitions of `projects`)
-  // trackIndex always points into copy2 (the middle) during normal navigation.
-  //   copy2 occupies indices  [n .. 2n-1]
-  //   copy1 occupies indices  [0 .. n-1]   ← left buffer
-  //   copy3 occupies indices [2n .. 3n-1]  ← right buffer
-  //
-  // When trackIndex slides into copy1 (< n) or copy3 (>= 2n),
-  // handleTransitionEnd silently jumps ±n so we're back in copy2 at the
-  // visually identical position. Because copy1/copy2/copy3 are identical,
-  // the jump is completely invisible to the user.
-  // ─────────────────────────────────────────────────────────────────────
-
   const n = projects.length
-  const trackItems = [...projects, ...projects, ...projects]
 
-  // silentJump: teleport trackIndex with NO visible animation.
-  // Kills BOTH the track's translateX transition AND every child slide's
-  // scale/opacity transition so the snap is truly invisible.
-  const silentJump = (newIdx: number) => {
-    const el = trackRef.current
-    if (el) {
-      el.style.transition = 'none'
-      el.classList.add('instant')        // CSS kills child transitions too
+  const pCardWidth = sectionWidth > 0 ? sectionWidth * 0.60 : 0
+  const pGap = 24
+  const pCardStep = pCardWidth + pGap
+  const pCenterOff = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
+  // Position based on linear currentIndex (no looping)
+  const pTrackX = pCenterOff - currentIndex * pCardStep
+
+  const atStart = currentIndex === 0
+  const atEnd = currentIndex === n - 1
+
+  const goNext = () => {
+    if (!isAnimating && !atEnd) {
+      setIsAnimating(true)
+      setCurrentIndex(i => i + 1)
     }
-    trackIndexRef.current = newIdx
-    setTrackIndex(newIdx)
-    requestAnimationFrame(() => requestAnimationFrame(() => {
-      if (el) {
-        el.style.transition = ''
-        el.classList.remove('instant')
-      }
-    }))
+  }
+
+  const goPrev = () => {
+    if (!isAnimating && !atStart) {
+      setIsAnimating(true)
+      setCurrentIndex(i => i - 1)
+    }
+  }
+
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== trackRef.current || e.propertyName !== 'transform') return
+    setIsAnimating(false)
   }
 
   // Switch category: fade out → swap → fade in
   const switchCategory = (id: string) => {
     if (id === activeCategoryId) return
-    const newN = projectCategories.find(c => c.id === id)!.projects.length
 
     // Phase 1 – fade out current carousel
     setIsCategorySwitching(true)
 
     setTimeout(() => {
-      // Phase 2 – swap content while invisible
+      // Phase 2 – swap content while invisible, reset to first item
       setActiveCategoryId(id)
       setIsAnimating(false)
-      silentJump(newN)   // reset to first item of new category
+      setCurrentIndex(0)
 
       // Phase 3 – fade back in
       requestAnimationFrame(() => requestAnimationFrame(() => {
         setIsCategorySwitching(false)
       }))
     }, 240)  // matches CSS fade-out duration
-  }
-
-  // ─ Centered carousel geometry ─
-  const pCardWidth = sectionWidth > 0 ? sectionWidth * 0.60 : 0
-  const pGap = 24
-  const pCardStep = pCardWidth + pGap
-  const pCenterOff = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
-  const pTrackX = pCenterOff - trackIndex * pCardStep
-  // realIndex: which project (0-based) is currently centred
-  const realIndex = ((trackIndex % n) + n) % n
-
-  const goNext = () => {
-    if (!isAnimating) {
-      setIsAnimating(true)
-      const next = trackIndexRef.current + 1
-      trackIndexRef.current = next
-      setTrackIndex(next)
-    }
-  }
-
-  const goPrev = () => {
-    if (!isAnimating) {
-      setIsAnimating(true)
-      const prev = trackIndexRef.current - 1
-      trackIndexRef.current = prev
-      setTrackIndex(prev)
-    }
-  }
-
-  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
-    // IMPORTANT: transitionend bubbles from every child .project-slide
-    // (opacity, transform, box-shadow…). We ONLY want to handle the track's
-    // own translateX transition finishing — ignore everything else.
-    if (e.target !== trackRef.current || e.propertyName !== 'transform') return
-
-    setIsAnimating(false)
-    const currentIndex = trackIndexRef.current
-    if (currentIndex >= 2 * n) {
-      silentJump(currentIndex - n)
-    } else if (currentIndex < n) {
-      silentJump(currentIndex + n)
-    }
   }
 
   return (
@@ -559,8 +505,8 @@ function App() {
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}
           >
-            {trackItems.map((project, idx) => {
-              const isActive = idx === trackIndex
+            {projects.map((project, idx) => {
+              const isActive = idx === currentIndex
               return (
                 <a
                   key={`${project.id}-${idx}`}
@@ -570,8 +516,8 @@ function App() {
                   target={isActive ? '_blank' : undefined}
                   rel={isActive ? 'noopener noreferrer' : undefined}
                   onClick={(e) => {
-                    if (idx < trackIndex) { e.preventDefault(); goPrev() }
-                    else if (idx > trackIndex) { e.preventDefault(); goNext() }
+                    if (idx < currentIndex) { e.preventDefault(); goPrev() }
+                    else if (idx > currentIndex) { e.preventDefault(); goNext() }
                   }}
                 >
                   <div className="project-image-wrap">
@@ -600,16 +546,28 @@ function App() {
         {/* Nav + dots inside container */}
         <div className="container">
           <div className="project-nav">
-            <button className="cert-arrow" onClick={goPrev} aria-label="Previous project">←</button>
-            <span className="project-counter">{realIndex + 1} / {projects.length}</span>
-            <button className="cert-arrow" onClick={goNext} aria-label="Next project">→</button>
+            <button
+              className="cert-arrow"
+              onClick={goPrev}
+              aria-label="Previous project"
+              disabled={atStart}
+              style={{ opacity: atStart ? 0.3 : 1, cursor: atStart ? 'not-allowed' : 'pointer' }}
+            >←</button>
+            <span className="project-counter">{currentIndex + 1} / {projects.length}</span>
+            <button
+              className="cert-arrow"
+              onClick={goNext}
+              aria-label="Next project"
+              disabled={atEnd}
+              style={{ opacity: atEnd ? 0.3 : 1, cursor: atEnd ? 'not-allowed' : 'pointer' }}
+            >→</button>
           </div>
           <div className="cert-dots" style={{ marginTop: '1rem' }}>
             {projects.map((_, i) => (
               <button
                 key={i}
-                className={`cert-dot${i === realIndex ? ' cert-dot-active' : ''}`}
-                onClick={() => { if (!isAnimating) setTrackIndex(n + i) }}  // navigate within middle copy
+                className={`cert-dot${i === currentIndex ? ' cert-dot-active' : ''}`}
+                onClick={() => { if (!isAnimating) setCurrentIndex(i) }}
                 aria-label={`Go to project ${i + 1}`}
               />
             ))}
