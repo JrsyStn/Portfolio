@@ -8,25 +8,23 @@ import './App.css'
 // Change the `imageSize` value (in px) for each skill to resize its icon.
 // ─────────────────────────────────────────────
 const skillCards = [
-  { name: 'React', image: new URL('./assets/react.svg', import.meta.url).href, imageSize: 40 },
-  { name: 'TypeScript', image: new URL('./assets/ts.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Tailwind CSS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Next.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Vite', image: new URL('./assets/vite.svg', import.meta.url).href, imageSize: 36 },
-  { name: 'Node.js', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Python', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Express', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'FastAPI', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'PostgreSQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Git', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Docker', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'AWS', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Firebase', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'GraphQL', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'UI/UX Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Figma', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 36 },
-  { name: 'Responsive Design', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
-  { name: 'Accessibility', image: new URL('./assets/profile.png', import.meta.url).href, imageSize: 32 },
+  { name: 'React', image: new URL('./assets/skills/react.svg', import.meta.url).href, imageSize: 40 },
+  { name: 'TypeScript', image: new URL('./assets/skills/ts.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Python', image: new URL('./assets/skills/Python.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Node JS', image: new URL('./assets/skills/Nodejs.png', import.meta.url).href, imageSize: 36 },
+  { name: 'HTML', image: new URL('./assets/skills/HTML.png', import.meta.url).href, imageSize: 36 },
+  { name: 'CSS', image: new URL('./assets/skills/CSS.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Javascript', image: new URL('./assets/skills/JS.png', import.meta.url).href, imageSize: 36 },
+  { name: 'PostgreSQL', image: new URL('./assets/skills/PostgreSQL.png', import.meta.url).href, imageSize: 32 },
+  { name: 'GIT', image: new URL('./assets/skills/GIT.png', import.meta.url).href, imageSize: 32 },
+  { name: 'AWS', image: new URL('./assets/skills/AWS.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Firebase', image: new URL('./assets/skills/Firebase.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Figma', image: new URL('./assets/skills/Figma.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Canva', image: new URL('./assets/skills/canva.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Capcut', image: new URL('./assets/skills/capcut.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Davinci Resolve', image: new URL('./assets/skills/Davinciresolve.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Gimp', image: new URL('./assets/skills/gimp.png', import.meta.url).href, imageSize: 36 },
+  { name: 'Adobe', image: new URL('./assets/skills/adobe.png', import.meta.url).href, imageSize: 36 }
 ]
 
 // ─────────────────────────────────────────────
@@ -177,13 +175,13 @@ function App() {
   ]
 
   // ─ Centered carousel geometry ─
-  const pCardWidth   = sectionWidth > 0 ? sectionWidth * 0.60 : 0
-  const pGap         = 24
-  const pCardStep    = pCardWidth + pGap
-  const pCenterOff   = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
-  const pTrackX      = pCenterOff - trackIndex * pCardStep
-  const realIndex    = (trackIndex - 1 + projects.length) % projects.length
-  const trackItems   = [projects[projects.length - 1], ...projects, projects[0]]
+  const pCardWidth = sectionWidth > 0 ? sectionWidth * 0.60 : 0
+  const pGap = 24
+  const pCardStep = pCardWidth + pGap
+  const pCenterOff = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
+  const pTrackX = pCenterOff - trackIndex * pCardStep
+  const realIndex = (trackIndex - 1 + projects.length) % projects.length
+  const trackItems = [projects[projects.length - 1], ...projects, projects[0]]
 
   const goNext = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i + 1) } }
   const goPrev = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i - 1) } }
