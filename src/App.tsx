@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import profileImage from './assets/profile.png'
 import projectImage from './assets/hero.png'
 import './App.css'
@@ -105,11 +105,28 @@ function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [theme, setTheme] = useState('light')
   const [certIndex, setCertIndex] = useState(0)
+  const [trackIndex, setTrackIndex] = useState(1) // 1 = first real item (index 0 is last-clone)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const [sectionWidth, setSectionWidth] = useState(0)
+
+  const projectSectionRef = useRef<HTMLElement | null>(null)
+  const trackRef = useRef<HTMLDivElement | null>(null)
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
     setTheme(savedTheme)
     document.documentElement.setAttribute('data-theme', savedTheme)
+  }, [])
+
+  useEffect(() => {
+    const measure = () => {
+      if (projectSectionRef.current) {
+        setSectionWidth(projectSectionRef.current.offsetWidth)
+      }
+    }
+    measure()
+    window.addEventListener('resize', measure)
+    return () => window.removeEventListener('resize', measure)
   }, [])
 
   const toggleTheme = () => {
@@ -159,7 +176,34 @@ function App() {
     },
   ]
 
-  const sliderRef = useRef<HTMLDivElement | null>(null)
+  // ─ Centered carousel geometry ─
+  const pCardWidth   = sectionWidth > 0 ? sectionWidth * 0.60 : 0
+  const pGap         = 24
+  const pCardStep    = pCardWidth + pGap
+  const pCenterOff   = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
+  const pTrackX      = pCenterOff - trackIndex * pCardStep
+  const realIndex    = (trackIndex - 1 + projects.length) % projects.length
+  const trackItems   = [projects[projects.length - 1], ...projects, projects[0]]
+
+  const goNext = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i + 1) } }
+  const goPrev = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i - 1) } }
+
+  const handleTransitionEnd = () => {
+    setIsAnimating(false)
+    if (trackIndex >= projects.length + 1) {
+      if (trackRef.current) trackRef.current.style.transition = 'none'
+      setTrackIndex(1)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (trackRef.current) trackRef.current.style.transition = ''
+      }))
+    } else if (trackIndex <= 0) {
+      if (trackRef.current) trackRef.current.style.transition = 'none'
+      setTrackIndex(projects.length)
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        if (trackRef.current) trackRef.current.style.transition = ''
+      }))
+    }
+  }
 
   return (
     <div className="app">
@@ -252,34 +296,73 @@ function App() {
       </section>
 
       {/* ── Projects ── */}
-      <section id="projects" className="projects-section">
+      <section id="projects" className="projects-section" ref={projectSectionRef as React.RefObject<HTMLElement>}>
+        {/* Title inside container */}
         <div className="container">
           <h2 className="section-title">Featured Projects</h2>
-          <div className="projects-grid">
-            {projects.map((project) => (
-              <a
-                key={project.id}
-                href={project.link}
-                className="project-card"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <div className="project-image-wrap">
-                  <img className="project-image" src={project.image} alt={project.title} />
-                  <div className="project-overlay">
-                    <span className="project-view-btn">View Project →</span>
+        </div>
+
+        {/* Full-width track – lives outside container so peek bleeds to edges */}
+        <div className="project-slider-outer">
+          <div
+            className="project-track"
+            ref={trackRef}
+            style={{ transform: `translateX(${pTrackX}px)` }}
+            onTransitionEnd={handleTransitionEnd}
+          >
+            {trackItems.map((project, idx) => {
+              const isActive = idx === trackIndex
+              return (
+                <a
+                  key={`${project.id}-${idx}`}
+                  href={project.link}
+                  className={`project-card project-slide${isActive ? ' project-slide-active' : ''}`}
+                  style={pCardWidth ? { width: `${pCardWidth}px` } : undefined}
+                  target={isActive ? '_blank' : undefined}
+                  rel={isActive ? 'noopener noreferrer' : undefined}
+                  onClick={(e) => {
+                    if (idx < trackIndex) { e.preventDefault(); goPrev() }
+                    else if (idx > trackIndex) { e.preventDefault(); goNext() }
+                  }}
+                >
+                  <div className="project-image-wrap">
+                    <img className="project-image" src={project.image} alt={project.title} />
+                    {isActive && (
+                      <div className="project-overlay">
+                        <span className="project-view-btn">View Project →</span>
+                      </div>
+                    )}
                   </div>
-                </div>
-                <div className="project-body">
-                  <h3 className="project-title">{project.title}</h3>
-                  <p className="project-description">{project.description}</p>
-                  <div className="project-tech">
-                    {project.technologies.map((tech, idx) => (
-                      <span key={idx} className="tech-tag">{tech}</span>
-                    ))}
+                  <div className="project-body">
+                    <h3 className="project-title">{project.title}</h3>
+                    <p className="project-description">{project.description}</p>
+                    <div className="project-tech">
+                      {project.technologies.map((tech, techIdx) => (
+                        <span key={techIdx} className="tech-tag">{tech}</span>
+                      ))}
+                    </div>
                   </div>
-                </div>
-              </a>
+                </a>
+              )
+            })}
+          </div>
+        </div>
+
+        {/* Nav + dots inside container */}
+        <div className="container">
+          <div className="project-nav">
+            <button className="cert-arrow" onClick={goPrev} aria-label="Previous project">←</button>
+            <span className="project-counter">{realIndex + 1} / {projects.length}</span>
+            <button className="cert-arrow" onClick={goNext} aria-label="Next project">→</button>
+          </div>
+          <div className="cert-dots" style={{ marginTop: '1rem' }}>
+            {projects.map((_, i) => (
+              <button
+                key={i}
+                className={`cert-dot${i === realIndex ? ' cert-dot-active' : ''}`}
+                onClick={() => { if (!isAnimating) setTrackIndex(i + 1) }}
+                aria-label={`Go to project ${i + 1}`}
+              />
             ))}
           </div>
         </div>
