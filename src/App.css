@@ -531,6 +531,7 @@ body {
   transition: transform .5s cubic-bezier(.25,.46,.45,.94);
   will-change: transform;
   align-items: stretch;
+  touch-action: pan-y;
 }
 
 /* During a silent jump: kill ALL child slide transitions so the snap is invisible */
@@ -695,13 +696,22 @@ body {
   background: linear-gradient(135deg, rgba(129,140,248,.07) 0%, rgba(244,114,182,.07) 100%);
 }
 
-/* Outer row: arrow | card | arrow */
+/* Outer row: card with bottom navigation */
 .cert-slider {
   display: flex;
-  align-items: center;
-  gap: 1.5rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 1rem;
   max-width: 1060px;
   margin: 0 auto;
+  touch-action: pan-y;
+}
+
+.cert-nav-bottom {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 /* Arrow buttons */
@@ -1127,11 +1137,22 @@ body {
   .project-category-tabs { gap: .45rem; }
   .category-tab { padding: .45rem .9rem; font-size: .82rem; }
   .category-tab-count { display: none; }
+  .project-slider-outer { padding: 0 0.75rem; }
+  .project-nav { flex-wrap: wrap; gap: 0.75rem; }
 
   /* Certificates */
   .certificates-section { padding: 48px 1rem; }
-  .cert-slider { flex-direction: column; align-items: stretch; gap: 1rem; }
-  .cert-arrow { display: none; }    /* dots-only navigation on tiny screens */
+  .cert-slider {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+  .cert-arrow {
+    display: flex;
+    width: 44px;
+    height: 44px;
+    font-size: 1rem;
+  }
   .cert-slide { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; gap: 1.25rem; }
   .cert-preview { min-height: 160px; }
   .cert-slide-title { font-size: 1.1rem; }

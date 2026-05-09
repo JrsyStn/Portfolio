@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import profileImage from './assets/profile.png'
 import projectImage from './assets/hero.png'
 import './App.css'
@@ -222,6 +222,12 @@ function App() {
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
+  const certTouchStartX = useRef<number | null>(null)
+  const trackIndexRef = useRef<number>(projectCategories[0].projects.length)
+
+  useEffect(() => {
+    trackIndexRef.current = trackIndex
+  }, [trackIndex])
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -266,21 +272,34 @@ function App() {
   }
 
   // Touch swipe handlers for project carousel
-  const onTouchStart = useCallback((e: React.TouchEvent) => {
+  const onTouchStart = (e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
-  }, [])
+  }
 
-  const onTouchEnd = useCallback((e: React.TouchEvent) => {
+  const onTouchEnd = (e: React.TouchEvent) => {
     if (touchStartX.current === null) return
     const dx = e.changedTouches[0].clientX - touchStartX.current
     touchStartX.current = null
     if (Math.abs(dx) < 40) return  // ignore tiny taps
     if (dx < 0) goNext()
     else goPrev()
-  }, [isAnimating])  // eslint-disable-line
+  }
 
   const prevCert = () => setCertIndex(i => (i - 1 + certificates.length) % certificates.length)
   const nextCert = () => setCertIndex(i => (i + 1) % certificates.length)
+
+  const onCertTouchStart = (e: React.TouchEvent) => {
+    certTouchStartX.current = e.touches[0].clientX
+  }
+
+  const onCertTouchEnd = (e: React.TouchEvent) => {
+    if (certTouchStartX.current === null) return
+    const dx = e.changedTouches[0].clientX - certTouchStartX.current
+    certTouchStartX.current = null
+    if (Math.abs(dx) < 30) return
+    if (dx < 0) nextCert()
+    else prevCert()
+  }
 
   const activeCert = certificates[certIndex]
 
@@ -313,6 +332,7 @@ function App() {
       el.style.transition = 'none'
       el.classList.add('instant')        // CSS kills child transitions too
     }
+    trackIndexRef.current = newIdx
     setTrackIndex(newIdx)
     requestAnimationFrame(() => requestAnimationFrame(() => {
       if (el) {
@@ -352,8 +372,23 @@ function App() {
   // realIndex: which project (0-based) is currently centred
   const realIndex = ((trackIndex % n) + n) % n
 
-  const goNext = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i + 1) } }
-  const goPrev = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i - 1) } }
+  const goNext = () => {
+    if (!isAnimating) {
+      setIsAnimating(true)
+      const next = trackIndexRef.current + 1
+      trackIndexRef.current = next
+      setTrackIndex(next)
+    }
+  }
+
+  const goPrev = () => {
+    if (!isAnimating) {
+      setIsAnimating(true)
+      const prev = trackIndexRef.current - 1
+      trackIndexRef.current = prev
+      setTrackIndex(prev)
+    }
+  }
 
   const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
     // IMPORTANT: transitionend bubbles from every child .project-slide
@@ -362,11 +397,11 @@ function App() {
     if (e.target !== trackRef.current || e.propertyName !== 'transform') return
 
     setIsAnimating(false)
-    // After scrolling into a buffer copy, silently snap back to middle copy
-    if (trackIndex >= 2 * n) {
-      silentJump(trackIndex - n)
-    } else if (trackIndex < n) {
-      silentJump(trackIndex + n)
+    const currentIndex = trackIndexRef.current
+    if (currentIndex >= 2 * n) {
+      silentJump(currentIndex - n)
+    } else if (currentIndex < n) {
+      silentJump(currentIndex + n)
     }
   }
 
@@ -587,13 +622,7 @@ function App() {
         <div className="container">
           <h2 className="section-title">Certificates</h2>
 
-          <div className="cert-slider">
-            {/* Prev arrow */}
-            <button className="cert-arrow cert-arrow-left" onClick={prevCert} aria-label="Previous certificate">
-              ←
-            </button>
-
-            {/* Card */}
+          <div className="cert-slider" onTouchStart={onCertTouchStart} onTouchEnd={onCertTouchEnd}>
             <div className="cert-slide" key={activeCert.id}>
               {/* Certificate image (or placeholder if no image) */}
               <div className="cert-preview">
@@ -624,10 +653,14 @@ function App() {
               </div>
             </div>
 
-            {/* Next arrow */}
-            <button className="cert-arrow cert-arrow-right" onClick={nextCert} aria-label="Next certificate">
-              →
-            </button>
+            <div className="cert-nav-bottom">
+              <button className="cert-arrow cert-arrow-bottom" onClick={prevCert} aria-label="Previous certificate">
+                ←
+              </button>
+              <button className="cert-arrow cert-arrow-bottom" onClick={nextCert} aria-label="Next certificate">
+                →
+              </button>
+            </div>
           </div>
 
           {/* Dot indicators */}
