@@ -425,6 +425,74 @@ body {
 }
 
 /* ═══════════════════════════════════════
+   PROJECT CATEGORY TABS
+═══════════════════════════════════════ */
+.project-category-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: .65rem;
+  margin-bottom: 2.5rem;
+}
+
+.category-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .55rem 1.2rem;
+  border: 2px solid var(--border);
+  border-radius: 40px;
+  background: var(--bg-primary);
+  color: var(--text-light);
+  font-size: .88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .25s ease;
+  box-shadow: var(--shadow-sm);
+  white-space: nowrap;
+}
+
+.category-tab:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow);
+}
+
+.category-tab-active {
+  background: linear-gradient(135deg, var(--primary), var(--secondary));
+  border-color: transparent;
+  color: #fff !important;
+  box-shadow: 0 6px 20px rgba(99,102,241,.35);
+  transform: translateY(-2px);
+}
+
+.category-tab-icon {
+  font-size: 1.05rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.category-tab-label { letter-spacing: .01em; }
+
+.category-tab-count {
+  background: rgba(255,255,255,.22);
+  color: inherit;
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .15rem .5rem;
+  border-radius: 12px;
+  min-width: 1.4rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.category-tab:not(.category-tab-active) .category-tab-count {
+  background: var(--light);
+  color: var(--text-light);
+}
+
+/* ═══════════════════════════════════════
    PROJECTS SECTION  –  Centered peek carousel
 ═══════════════════════════════════════ */
 .projects-section {
@@ -445,6 +513,15 @@ body {
 .project-slider-outer {
   width: 100%;
   margin-top: 2rem;
+  transition: opacity 0.24s ease, transform 0.24s ease;
+  transform-origin: center top;
+}
+
+/* Category switch: fade + slight drop */
+.project-slider-outer.category-switching {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
+  pointer-events: none;
 }
 
 /* Sliding flex track */
@@ -454,6 +531,11 @@ body {
   transition: transform .5s cubic-bezier(.25,.46,.45,.94);
   will-change: transform;
   align-items: stretch;
+}
+
+/* During a silent jump: kill ALL child slide transitions so the snap is invisible */
+.project-track.instant .project-slide {
+  transition: none !important;
 }
 
 /* Every card in the track */

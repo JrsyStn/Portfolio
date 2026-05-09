@@ -4,6 +4,113 @@ import projectImage from './assets/hero.png'
 import './App.css'
 
 // ─────────────────────────────────────────────
+// PROJECT CATEGORIES
+// To add a new category: append a new object to this array.
+// To add a new project:  append to the `projects` array inside its category.
+//
+// Fields per category:
+//   id       – unique string key
+//   label    – display name shown on the tab
+//   icon     – emoji or short symbol for the tab
+//
+// Fields per project:
+//   id          – unique number
+//   title       – project name
+//   description – short summary
+//   technologies – array of strings
+//   image       – imported image (or URL string)
+//   link        – GitHub / live URL, or '#'
+// ─────────────────────────────────────────────
+const projectCategories = [
+  {
+    id: 'programming',
+    label: 'Programming',
+    icon: '💻',
+    projects: [
+      {
+        id: 1,
+        title: 'MeditrackRx',
+        description: 'Medication management app with reminders and tracking features',
+        technologies: ['Dart', 'Flutter', 'Firebase'],
+        image: projectImage,
+        link: 'https://github.com/JrsyStn/meditrackrx',
+      },
+      {
+        id: 2,
+        title: 'ExplorePh',
+        description: 'Travel guide website showcasing the beauty of the Philippines',
+        technologies: ['Html', 'CSS', 'JavaScript'],
+        image: projectImage,
+        link: 'https://github.com/JrsyStn/ExplorePhilippines',
+      },
+      {
+        id: 3,
+        title: 'Task Management Tool',
+        description: 'Collaborative task management with drag-and-drop interface',
+        technologies: ['React', 'Firebase', 'TypeScript', 'Tailwind CSS'],
+        image: projectImage,
+        link: '#',
+      },
+      {
+        id: 4,
+        title: 'AI Content Generator',
+        description: 'AI-powered content generation tool with API integration',
+        technologies: ['React', 'OpenAI API', 'Python', 'FastAPI'],
+        image: projectImage,
+        link: '#',
+      },
+    ],
+  },
+  {
+    id: 'graphic-design',
+    label: 'Graphic Design',
+    icon: '🎨',
+    projects: [
+      {
+        id: 1,
+        title: 'Brand Identity Kit',
+        description: 'Complete brand identity for a local coffee shop — logo, palette, and typography system',
+        technologies: ['Figma', 'Canva', 'Illustrator'],
+        image: projectImage,
+        link: '#',
+      },
+      {
+        id: 2,
+        title: 'UI/UX Case Study',
+        description: 'End-to-end UX redesign of a food-delivery mobile app with improved user flow',
+        technologies: ['Figma', 'Adobe XD'],
+        image: projectImage,
+        link: '#',
+      },
+    ],
+  },
+  {
+    id: 'media-editing',
+    label: 'Media Editing',
+    icon: '🎬',
+    projects: [
+      {
+        id: 1,
+        title: 'Short-Form Content Pack',
+        description: 'Edited a series of 30-second promotional reels optimized for social media reach',
+        technologies: ['CapCut', 'DaVinci Resolve'],
+        image: projectImage,
+        link: '#',
+      },
+      {
+        id: 2,
+        title: 'Documentary Highlight Reel',
+        description: 'Color-graded and edited a 5-minute highlight reel for a local environmental NGO',
+        technologies: ['DaVinci Resolve', 'GIMP'],
+        image: projectImage,
+        link: '#',
+      },
+    ],
+  },
+]
+
+
+// ─────────────────────────────────────────────
 // SKILL IMAGE SIZE CONFIGURATION
 // Change the `imageSize` value (in px) for each skill to resize its icon.
 // ─────────────────────────────────────────────
@@ -103,8 +210,12 @@ function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [theme, setTheme] = useState('light')
   const [certIndex, setCertIndex] = useState(0)
-  const [trackIndex, setTrackIndex] = useState(1) // 1 = first real item (index 0 is last-clone)
+  const [activeCategoryId, setActiveCategoryId] = useState(projectCategories[0].id)
+  // trackIndex always lives in the middle copy of the 3-copy carousel array.
+  // Middle copy starts at index n (projects.length of the first category).
+  const [trackIndex, setTrackIndex] = useState(projectCategories[0].projects.length)
   const [isAnimating, setIsAnimating] = useState(false)
+  const [isCategorySwitching, setIsCategorySwitching] = useState(false)
   const [sectionWidth, setSectionWidth] = useState(0)
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
@@ -139,40 +250,64 @@ function App() {
 
   const activeCert = certificates[certIndex]
 
-  const projects = [
-    {
-      id: 1,
-      title: 'MeditrackRx',
-      description: 'Medication management app with reminders and tracking features',
-      technologies: ['Dart', 'Flutter', 'Firebase'],
-      image: projectImage,
-      link: 'https://github.com/JrsyStn/meditrackrx',
-    },
-    {
-      id: 2,
-      title: 'ExplorePh',
-      description: 'Travel guide website showcasing the beauty of the Philippines',
-      technologies: ['Html', 'CSS', 'JavaScript'],
-      image: projectImage,
-      link: 'https://github.com/JrsyStn/ExplorePhilippines',
-    },
-    {
-      id: 3,
-      title: 'Task Management Tool',
-      description: 'Collaborative task management with drag-and-drop interface',
-      technologies: ['React', 'Firebase', 'TypeScript', 'Tailwind CSS'],
-      image: projectImage,
-      link: '#',
-    },
-    {
-      id: 4,
-      title: 'AI Content Generator',
-      description: 'AI-powered content generation tool with API integration',
-      technologies: ['React', 'OpenAI API', 'Python', 'FastAPI'],
-      image: projectImage,
-      link: '#',
-    },
-  ]
+  // Derive the active category's projects
+  const activeCategory = projectCategories.find(c => c.id === activeCategoryId) ?? projectCategories[0]
+  const projects = activeCategory.projects
+
+  // ─ 3-copy infinite carousel ─────────────────────────────────────────
+  // trackItems = [copy1, copy2, copy3]  (3 full repetitions of `projects`)
+  // trackIndex always points into copy2 (the middle) during normal navigation.
+  //   copy2 occupies indices  [n .. 2n-1]
+  //   copy1 occupies indices  [0 .. n-1]   ← left buffer
+  //   copy3 occupies indices [2n .. 3n-1]  ← right buffer
+  //
+  // When trackIndex slides into copy1 (< n) or copy3 (>= 2n),
+  // handleTransitionEnd silently jumps ±n so we're back in copy2 at the
+  // visually identical position. Because copy1/copy2/copy3 are identical,
+  // the jump is completely invisible to the user.
+  // ─────────────────────────────────────────────────────────────────────
+
+  const n = projects.length
+  const trackItems = [...projects, ...projects, ...projects]
+
+  // silentJump: teleport trackIndex with NO visible animation.
+  // Kills BOTH the track's translateX transition AND every child slide's
+  // scale/opacity transition so the snap is truly invisible.
+  const silentJump = (newIdx: number) => {
+    const el = trackRef.current
+    if (el) {
+      el.style.transition = 'none'
+      el.classList.add('instant')        // CSS kills child transitions too
+    }
+    setTrackIndex(newIdx)
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      if (el) {
+        el.style.transition = ''
+        el.classList.remove('instant')
+      }
+    }))
+  }
+
+  // Switch category: fade out → swap → fade in
+  const switchCategory = (id: string) => {
+    if (id === activeCategoryId) return
+    const newN = projectCategories.find(c => c.id === id)!.projects.length
+
+    // Phase 1 – fade out current carousel
+    setIsCategorySwitching(true)
+
+    setTimeout(() => {
+      // Phase 2 – swap content while invisible
+      setActiveCategoryId(id)
+      setIsAnimating(false)
+      silentJump(newN)   // reset to first item of new category
+
+      // Phase 3 – fade back in
+      requestAnimationFrame(() => requestAnimationFrame(() => {
+        setIsCategorySwitching(false)
+      }))
+    }, 240)  // matches CSS fade-out duration
+  }
 
   // ─ Centered carousel geometry ─
   const pCardWidth = sectionWidth > 0 ? sectionWidth * 0.60 : 0
@@ -180,26 +315,24 @@ function App() {
   const pCardStep = pCardWidth + pGap
   const pCenterOff = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
   const pTrackX = pCenterOff - trackIndex * pCardStep
-  const realIndex = (trackIndex - 1 + projects.length) % projects.length
-  const trackItems = [projects[projects.length - 1], ...projects, projects[0]]
+  // realIndex: which project (0-based) is currently centred
+  const realIndex = ((trackIndex % n) + n) % n
 
   const goNext = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i + 1) } }
   const goPrev = () => { if (!isAnimating) { setIsAnimating(true); setTrackIndex(i => i - 1) } }
 
-  const handleTransitionEnd = () => {
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    // IMPORTANT: transitionend bubbles from every child .project-slide
+    // (opacity, transform, box-shadow…). We ONLY want to handle the track's
+    // own translateX transition finishing — ignore everything else.
+    if (e.target !== trackRef.current || e.propertyName !== 'transform') return
+
     setIsAnimating(false)
-    if (trackIndex >= projects.length + 1) {
-      if (trackRef.current) trackRef.current.style.transition = 'none'
-      setTrackIndex(1)
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        if (trackRef.current) trackRef.current.style.transition = ''
-      }))
-    } else if (trackIndex <= 0) {
-      if (trackRef.current) trackRef.current.style.transition = 'none'
-      setTrackIndex(projects.length)
-      requestAnimationFrame(() => requestAnimationFrame(() => {
-        if (trackRef.current) trackRef.current.style.transition = ''
-      }))
+    // After scrolling into a buffer copy, silently snap back to middle copy
+    if (trackIndex >= 2 * n) {
+      silentJump(trackIndex - n)
+    } else if (trackIndex < n) {
+      silentJump(trackIndex + n)
     }
   }
 
@@ -295,13 +428,31 @@ function App() {
 
       {/* ── Projects ── */}
       <section id="projects" className="projects-section" ref={projectSectionRef as React.RefObject<HTMLElement>}>
-        {/* Title inside container */}
+        {/* Title + category tabs inside container */}
         <div className="container">
           <h2 className="section-title">Featured Projects</h2>
+
+          {/* ── Category tab bar ── */}
+          <div className="project-category-tabs" role="tablist" aria-label="Project categories">
+            {projectCategories.map(cat => (
+              <button
+                key={cat.id}
+                id={`tab-${cat.id}`}
+                role="tab"
+                aria-selected={cat.id === activeCategoryId}
+                className={`category-tab${cat.id === activeCategoryId ? ' category-tab-active' : ''}`}
+                onClick={() => switchCategory(cat.id)}
+              >
+                <span className="category-tab-icon">{cat.icon}</span>
+                <span className="category-tab-label">{cat.label}</span>
+                <span className="category-tab-count">{cat.projects.length}</span>
+              </button>
+            ))}
+          </div>
         </div>
 
         {/* Full-width track – lives outside container so peek bleeds to edges */}
-        <div className="project-slider-outer">
+        <div className={`project-slider-outer${isCategorySwitching ? ' category-switching' : ''}`}>
           <div
             className="project-track"
             ref={trackRef}
@@ -358,7 +509,7 @@ function App() {
               <button
                 key={i}
                 className={`cert-dot${i === realIndex ? ' cert-dot-active' : ''}`}
-                onClick={() => { if (!isAnimating) setTrackIndex(i + 1) }}
+                onClick={() => { if (!isAnimating) setTrackIndex(n + i) }}  // navigate within middle copy
                 aria-label={`Go to project ${i + 1}`}
               />
             ))}
