@@ -704,8 +704,9 @@ body {
 
 .cert-nav-bottom {
   display: flex;
+  align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.25rem;
   margin-top: 1rem;
 }
 
@@ -746,6 +747,9 @@ body {
   padding: 2.5rem;
   box-shadow: var(--shadow-sm);
   animation: certFadeIn .35s ease;
+  /* Fixed height so every card is the same size */
+  min-height: 280px;
+  align-items: stretch;
 }
 
 @keyframes certFadeIn {
@@ -762,6 +766,8 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
+  /* Let it fill the grid row fully */
+  align-self: stretch;
   min-height: 210px;
 }
 
@@ -1043,16 +1049,17 @@ body {
 ═══════════════════════════════════════ */
 @media (max-width: 1024px) {
   .hero-content { gap: 2rem; }
-  .cert-slide { grid-template-columns: 220px 1fr; gap: 1.75rem; }
-  .cert-preview { min-height: 180px; }
+  .cert-slide { grid-template-columns: 200px 1fr; gap: 1.75rem; min-height: 260px; }
+  .cert-preview { min-height: 0; }
 }
 
 /* ═══════════════════════════════════════
    RESPONSIVE — tablet / small laptop (≤ 900px)
 ═══════════════════════════════════════ */
 @media (max-width: 900px) {
-  .cert-slide { grid-template-columns: 1fr; }
-  .cert-preview { min-height: 200px; }
+  /* Stack cert card to single column but keep fixed height */
+  .cert-slide { grid-template-columns: 1fr; min-height: 0; }
+  .cert-preview { min-height: 200px; max-height: 200px; }
 
   /* Show hamburger, hide desktop links */
   .nav-links    { display: none; }
@@ -1089,7 +1096,7 @@ body {
   /* Certificates */
   .cert-slider { gap: .75rem; }
   .cert-arrow  { width: 40px; height: 40px; font-size: 1rem; }
-  .cert-slide  { padding: 1.75rem; }
+  .cert-slide  { padding: 1.75rem; min-height: 0; }
 
   /* Contact */
   .contact-methods { grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -1148,8 +1155,8 @@ body {
     height: 44px;
     font-size: 1rem;
   }
-  .cert-slide { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; gap: 1.25rem; }
-  .cert-preview { min-height: 160px; }
+  .cert-slide { grid-template-columns: 1fr; padding: 1.5rem 1.25rem; gap: 1.25rem; min-height: 0; }
+  .cert-preview { min-height: 160px; max-height: 180px; }
   .cert-slide-title { font-size: 1.1rem; }
 
   /* Contact */

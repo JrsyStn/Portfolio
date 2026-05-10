@@ -393,7 +393,7 @@ function App() {
       <div className={`mobile-nav-overlay${menuOpen ? ' mobile-nav-open' : ''}`} onClick={() => setMenuOpen(false)} />
       <div className={`mobile-nav${menuOpen ? ' mobile-nav-open' : ''}`}>
         <ul className="mobile-nav-links">
-          {[['home','Home'],['about','About'],['projects','Projects'],['skills','Skills'],['certificates','Certificates'],['contact','Contact']].map(([id, label]) => (
+          {[['home', 'Home'], ['about', 'About'], ['projects', 'Projects'], ['skills', 'Skills'], ['certificates', 'Certificates'], ['contact', 'Contact']].map(([id, label]) => (
             <li key={id}>
               <a href={`#${id}`} onClick={() => handleNavClick(id)} className={activeSection === id ? 'active' : ''}>{label}</a>
             </li>
@@ -596,7 +596,6 @@ function App() {
 
               {/* Info */}
               <div className="cert-info">
-                <p className="cert-counter">{certIndex + 1} / {certificates.length}</p>
                 <h3 className="cert-slide-title">{activeCert.title}</h3>
                 <p className="cert-slide-issuer">{activeCert.issuer} · {activeCert.date}</p>
                 <p className="cert-slide-desc">{activeCert.description}</p>
@@ -612,25 +611,26 @@ function App() {
             </div>
 
             <div className="cert-nav-bottom">
-              <button className="cert-arrow cert-arrow-bottom" onClick={prevCert} aria-label="Previous certificate">
+              <button
+                className="cert-arrow cert-arrow-bottom"
+                onClick={prevCert}
+                aria-label="Previous certificate"
+                disabled={certIndex === 0}
+                style={{ opacity: certIndex === 0 ? 0.3 : 1, cursor: certIndex === 0 ? 'not-allowed' : 'pointer' }}
+              >
                 ←
               </button>
-              <button className="cert-arrow cert-arrow-bottom" onClick={nextCert} aria-label="Next certificate">
+              <span className="project-counter">{certIndex + 1} / {certificates.length}</span>
+              <button
+                className="cert-arrow cert-arrow-bottom"
+                onClick={nextCert}
+                aria-label="Next certificate"
+                disabled={certIndex === certificates.length - 1}
+                style={{ opacity: certIndex === certificates.length - 1 ? 0.3 : 1, cursor: certIndex === certificates.length - 1 ? 'not-allowed' : 'pointer' }}
+              >
                 →
               </button>
             </div>
-          </div>
-
-          {/* Dot indicators */}
-          <div className="cert-dots">
-            {certificates.map((_, i) => (
-              <button
-                key={i}
-                className={`cert-dot${i === certIndex ? ' cert-dot-active' : ''}`}
-                onClick={() => setCertIndex(i)}
-                aria-label={`Go to certificate ${i + 1}`}
-              />
-            ))}
           </div>
         </div>
       </section>
