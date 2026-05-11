@@ -593,8 +593,8 @@ body {
   display: flex;
   flex-direction: column;
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
-  height: 540px;
-  min-height: 540px;
+  height: 500px;
+  min-height: 500px;
 }
 
 .project-card:hover {
@@ -662,7 +662,7 @@ body {
   color: var(--text-light);
   line-height: 1.6;
   font-size: .95rem;
-  max-height: 5.4rem;
+  height: 6.2rem;
   overflow: hidden;
   position: relative;
 }
@@ -673,7 +673,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  height: 2.4rem;
+  height: 1.4rem;
   background: linear-gradient(180deg, rgba(255,255,255,0), var(--bg-primary));
   pointer-events: none;
 }
@@ -1121,11 +1121,11 @@ body {
   /* Projects – full-width card on mobile */
   .projects-section { padding: 56px 0; }
   .project-card {
-    height: 520px;
-    min-height: 520px;
+    height: 500px;
+    min-height: 500px;
   }
   .project-description {
-    max-height: 4.8rem;
+    height: 6.2rem;
   }
 }
 
@@ -1166,10 +1166,10 @@ body {
   .project-nav { flex-wrap: wrap; gap: 0.75rem; }
   .project-card {
     height: auto;
-    min-height: 480px;
+    min-height: 460px;
   }
   .project-description {
-    max-height: 4.5rem;
+    height: 6.2rem;
   }
 
   /* Certificates */
