@@ -65,7 +65,7 @@ const projectCategories = [
         image: new URL('./assets/projects/policy.jfif', import.meta.url).href,
         link: 'https://www.canva.com/design/DAHJVwckIRU/VhUx_RBzD8LwS0dEKft31g/edit',
         fullDescription: 'Designed the front page for the DRRM Technology Inventions Policy publication of Batangas State University. The design incorporates university branding, clear typography hierarchy, and visual elements that convey the importance of disaster risk reduction and management. The layout ensures readability while maintaining a professional and authoritative appearance suitable for official university publications.',
-        images: [new URL('./assets/projects/policy.jfif', import.meta.url).href, ],
+        images: [new URL('./assets/projects/policy.jfif', import.meta.url).href, new URL('./assets/projects/policy.jfif', import.meta.url).href, new URL('./assets/projects/policy.jfif', import.meta.url).href, new URL('./assets/projects/policy.jfif', import.meta.url).href, ],
         features: ['University branding integration', 'Professional typography', 'Clear visual hierarchy', 'DRRM-themed iconography'],
         challenges: 'Balancing aesthetic appeal with document readability and maintaining brand consistency.'
       },
