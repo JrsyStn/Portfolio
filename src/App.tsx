@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
 import profileImage from './assets/profile.png'
-import projectImage from './assets/hero.png'
 import './App.css'
 
 // ─────────────────────────────────────────────
@@ -34,6 +33,10 @@ const projectCategories = [
         technologies: ['Dart', 'Flutter', 'Firebase'],
         image: new URL('./assets/projects/image.png', import.meta.url).href,
         link: 'https://github.com/JrsyStn/meditrackrx',
+        fullDescription: 'MeditrackRx is a comprehensive medication management application built with Flutter and Firebase. The app helps users track their medication schedules, set reminders, and monitor their adherence to prescribed treatments. Key features include customizable reminder notifications, medication history tracking, and integration with Firebase for cloud storage and real-time synchronization across devices.',
+        images: [new URL('./assets/projects/image.png', import.meta.url).href, new URL('./assets/projects/image.png', import.meta.url).href, new URL('./assets/projects/image.png', import.meta.url).href],
+        features: ['Medication reminders', 'Adherence tracking', 'Firebase integration', 'Cross-platform support'],
+        challenges: 'Implementing reliable push notifications and ensuring data privacy compliance.'
       },
       {
         id: 2,
@@ -42,6 +45,10 @@ const projectCategories = [
         technologies: ['Html', 'CSS', 'JavaScript'],
         image: new URL('./assets/projects/image.png', import.meta.url).href,
         link: 'https://github.com/JrsyStn/ExplorePhilippines',
+        fullDescription: 'ExplorePh is a responsive travel guide website dedicated to showcasing the natural beauty and cultural heritage of the Philippines. Built with vanilla HTML, CSS, and JavaScript, the site features interactive maps, destination guides, and photo galleries highlighting popular tourist spots across the archipelago.',
+        images: [new URL('./assets/projects/image.png', import.meta.url).href, new URL('./assets/projects/image.png', import.meta.url).href],
+        features: ['Interactive destination maps', 'Photo galleries', 'Responsive design', 'Local culture highlights'],
+        challenges: 'Optimizing images for web performance and creating smooth animations with pure JavaScript.'
       },
     ],
   },
@@ -57,6 +64,10 @@ const projectCategories = [
         technologies: ['Canva'],
         image: new URL('./assets/projects/policy.jfif', import.meta.url).href,
         link: 'https://www.canva.com/design/DAHJVwckIRU/VhUx_RBzD8LwS0dEKft31g/edit',
+        fullDescription: 'Designed the front page for the DRRM Technology Inventions Policy publication of Batangas State University. The design incorporates university branding, clear typography hierarchy, and visual elements that convey the importance of disaster risk reduction and management. The layout ensures readability while maintaining a professional and authoritative appearance suitable for official university publications.',
+        images: [new URL('./assets/projects/policy.jfif', import.meta.url).href, ],
+        features: ['University branding integration', 'Professional typography', 'Clear visual hierarchy', 'DRRM-themed iconography'],
+        challenges: 'Balancing aesthetic appeal with document readability and maintaining brand consistency.'
       },
       {
         id: 2,
@@ -65,6 +76,10 @@ const projectCategories = [
         technologies: ['Canva', 'Gimp'],
         image: new URL('./assets/projects/guide.jfif', import.meta.url).href,
         link: '#',
+        fullDescription: 'Created a comprehensive visual guide for multi-hazard emergency preparedness, covering various types of disasters including earthquakes, floods, and fires. The guide uses clear infographics, step-by-step instructions, and visual aids to help communities understand emergency procedures and safety measures.',
+        images: [new URL('./assets/projects/guide.jfif', import.meta.url).href, new URL('./assets/projects/earthquakedrill.jpg', import.meta.url).href, new URL('./assets/projects/firepreventionmonth.jpg', import.meta.url).href],
+        features: ['Multi-hazard coverage', 'Visual infographics', 'Step-by-step instructions', 'Community-focused design'],
+        challenges: 'Simplifying complex emergency procedures into clear, actionable visual content.'
       },
     ],
   },
@@ -80,6 +95,10 @@ const projectCategories = [
         technologies: ['CapCut', 'DaVinci Resolve', 'Gimp'],
         image: new URL('./assets/projects/firepreventionmonth.jpg', import.meta.url).href,
         link: 'https://www.facebook.com/reel/733009969778464',
+        fullDescription: 'Produced promotional video reels for Batangas State University\'s Fire Prevention Month activities. The videos document fire drill procedures, showcase safety demonstrations, and highlight emergency preparedness measures. Edited with professional color grading, smooth transitions, and engaging B-roll footage to effectively communicate fire safety messages to the university community.',
+        images: [new URL('./assets/projects/firepreventionmonth.jpg', import.meta.url).href],
+        features: ['Professional video editing', 'Color grading', 'Safety demonstrations', 'Community engagement'],
+        challenges: 'Capturing clear footage during live drill activities and maintaining viewer engagement in short-form video content.'
       },
       {
         id: 2,
@@ -88,6 +107,10 @@ const projectCategories = [
         technologies: ['DaVinci Resolve', 'GIMP'],
         image: new URL('./assets/projects/earthquakedrill.jpg', import.meta.url).href,
         link: 'https://www.facebook.com/reel/922363777286065',
+        fullDescription: 'Created video documentation for Batangas State University\'s earthquake drill exercises. The reels capture the entire drill process from preparation to execution, highlighting proper "duck, cover, and hold" procedures, orderly evacuation, and post-drill assessments. Professional editing techniques were used to create engaging content that educates viewers on earthquake safety while maintaining visual appeal.',
+        images: [new URL('./assets/projects/earthquakedrill.jpg', import.meta.url).href],
+        features: ['Drill documentation', 'Safety protocol visualization', 'Professional editing', 'Educational content'],
+        challenges: 'Coordinating filming during live emergency drills and ensuring all safety procedures were clearly captured.'
       },
     ],
   },
@@ -174,6 +197,8 @@ function App() {
   const [isAnimating, setIsAnimating] = useState(false)
   const [isCategorySwitching, setIsCategorySwitching] = useState(false)
   const [sectionWidth, setSectionWidth] = useState(0)
+  const [modalOpen, setModalOpen] = useState(false)
+  const [selectedProject, setSelectedProject] = useState<any>(null)
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
@@ -306,6 +331,16 @@ function App() {
         setIsCategorySwitching(false)
       }))
     }, 240)  // matches CSS fade-out duration
+  }
+
+  const openProjectModal = (project: any) => {
+    setSelectedProject(project)
+    setModalOpen(true)
+  }
+
+  const closeProjectModal = () => {
+    setModalOpen(false)
+    setSelectedProject(null)
   }
 
   return (
@@ -465,23 +500,21 @@ function App() {
             {projects.map((project, idx) => {
               const isActive = idx === currentIndex
               return (
-                <a
+                <div
                   key={`${project.id}-${idx}`}
-                  href={project.link}
                   className={`project-card project-slide${isActive ? ' project-slide-active' : ''}`}
                   style={pCardWidth ? { width: `${pCardWidth}px` } : undefined}
-                  target={isActive ? '_blank' : undefined}
-                  rel={isActive ? 'noopener noreferrer' : undefined}
-                  onClick={(e) => {
-                    if (idx < currentIndex) { e.preventDefault(); goPrev() }
-                    else if (idx > currentIndex) { e.preventDefault(); goNext() }
+                  onClick={() => {
+                    if (idx < currentIndex) { goPrev() }
+                    else if (idx > currentIndex) { goNext() }
+                    else if (isActive) { openProjectModal(project) }
                   }}
                 >
                   <div className="project-image-wrap">
                     <img className="project-image" src={project.image} alt={project.title} />
                     {isActive && (
                       <div className="project-overlay">
-                        <span className="project-view-btn">View Project →</span>
+                        <span className="project-view-btn">See More →</span>
                       </div>
                     )}
                   </div>
@@ -494,7 +527,7 @@ function App() {
                       ))}
                     </div>
                   </div>
-                </a>
+                </div>
               )
             })}
           </div>
@@ -625,6 +658,63 @@ function App() {
           <p>&copy; 2026 My Portfolio. All rights reserved.</p>
         </div>
       </footer>
+
+      {/* ── Project Modal ── */}
+      {modalOpen && selectedProject && (
+        <div className="project-modal-overlay" onClick={closeProjectModal}>
+          <div className="project-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeProjectModal}>×</button>
+            
+            <div className="modal-header">
+              <h2 className="modal-title">{selectedProject.title}</h2>
+              <div className="modal-tech">
+                {selectedProject.technologies.map((tech: string, idx: number) => (
+                  <span key={idx} className="tech-tag">{tech}</span>
+                ))}
+              </div>
+            </div>
+
+            <div className="modal-content">
+              <div className="modal-description">
+                <p>{selectedProject.fullDescription}</p>
+              </div>
+
+              {selectedProject.features && (
+                <div className="modal-features">
+                  <h3>Key Features</h3>
+                  <ul>
+                    {selectedProject.features.map((feature: string, idx: number) => (
+                      <li key={idx}>{feature}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {selectedProject.challenges && (
+                <div className="modal-challenges">
+                  <h3>Challenges Overcome</h3>
+                  <p>{selectedProject.challenges}</p>
+                </div>
+              )}
+
+              <div className="modal-images">
+                <h3>Project Gallery</h3>
+                <div className="modal-image-grid">
+                  {selectedProject.images.map((img: string, idx: number) => (
+                    <img key={idx} src={img} alt={`${selectedProject.title} ${idx + 1}`} className="modal-image" />
+                  ))}
+                </div>
+              </div>
+
+              <div className="modal-actions">
+                <a href={selectedProject.link} target="_blank" rel="noopener noreferrer" className="modal-link-btn">
+                  View Live Project →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }
