@@ -199,6 +199,8 @@ function App() {
   const [sectionWidth, setSectionWidth] = useState(0)
   const [modalOpen, setModalOpen] = useState(false)
   const [selectedProject, setSelectedProject] = useState<any>(null)
+  const [certModalOpen, setCertModalOpen] = useState(false)
+  const [selectedCertificate, setSelectedCertificate] = useState<any>(null)
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
@@ -341,6 +343,16 @@ function App() {
   const closeProjectModal = () => {
     setModalOpen(false)
     setSelectedProject(null)
+  }
+
+  const openCertModal = (certificate: any) => {
+    setSelectedCertificate(certificate)
+    setCertModalOpen(true)
+  }
+
+  const closeCertModal = () => {
+    setCertModalOpen(false)
+    setSelectedCertificate(null)
   }
 
   return (
@@ -575,7 +587,17 @@ function App() {
               {/* Certificate image (or placeholder if no image) */}
               <div className="cert-preview">
                 {activeCert.image ? (
-                  <img src={activeCert.image} alt={activeCert.title} className="cert-img" />
+                  <>
+                    <img src={activeCert.image} alt={activeCert.title} className="cert-img" />
+                    <button
+                      type="button"
+                      className="cert-image-trigger"
+                      onClick={() => openCertModal(activeCert)}
+                      aria-label="View full certificate image"
+                    >
+                      See Image
+                    </button>
+                  </>
                 ) : (
                   <div className="cert-placeholder">
                     <span className="cert-placeholder-icon">🏅</span>
@@ -711,6 +733,27 @@ function App() {
                   View Live Project →
                 </a>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {certModalOpen && selectedCertificate && (
+        <div className="project-modal-overlay" onClick={closeCertModal}>
+          <div className="project-modal cert-image-modal" onClick={(e) => e.stopPropagation()}>
+            <button className="modal-close" onClick={closeCertModal}>×</button>
+
+            <div className="modal-header">
+              <h2 className="modal-title">{selectedCertificate.title}</h2>
+              <p className="cert-modal-caption">{selectedCertificate.issuer} · {selectedCertificate.date}</p>
+            </div>
+
+            <div className="modal-content cert-modal-content">
+              <img
+                src={selectedCertificate.image}
+                alt={`${selectedCertificate.title} full certificate`}
+                className="full-cert-image"
+              />
             </div>
           </div>
         </div>

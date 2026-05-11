@@ -755,16 +755,15 @@ body {
 .cert-slide {
   flex: 1;
   display: grid;
-  grid-template-columns: 280px 1fr;
-  gap: 2.25rem;
+  grid-template-columns: 320px 1fr;
+  gap: 2rem;
   background: var(--bg-primary);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  padding: 2.5rem;
-  box-shadow: var(--shadow-sm);
+  border: 1px solid rgba(99,102,241,.15);
+  border-radius: 28px;
+  padding: 3rem;
+  box-shadow: 0 22px 50px rgba(15,23,42,.08);
   animation: certFadeIn .35s ease;
-  /* Fixed height so every card is the same size */
-  min-height: 280px;
+  min-height: 340px;
   align-items: stretch;
 }
 
@@ -775,16 +774,16 @@ body {
 
 /* Certificate image / placeholder */
 .cert-preview {
-  border-radius: 14px;
+  position: relative;
+  border-radius: 22px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(99,102,241,.1), rgba(236,72,153,.1));
-  border: 1px solid var(--border);
+  background: linear-gradient(135deg, rgba(99,102,241,.12), rgba(236,72,153,.12));
+  border: 1px solid rgba(99,102,241,.12);
   display: flex;
-  align-items: center;
+  align-items: stretch;
   justify-content: center;
-  /* Let it fill the grid row fully */
   align-self: stretch;
-  min-height: 210px;
+  min-height: 260px;
 }
 
 .cert-img {
@@ -792,6 +791,35 @@ body {
   height: 100%;
   object-fit: cover;
   display: block;
+  transition: transform .35s ease;
+}
+
+.cert-image-trigger {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(15, 23, 42, 0.45);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity .25s ease, transform .25s ease;
+}
+
+.cert-preview:hover .cert-image-trigger {
+  opacity: 1;
+}
+
+.cert-image-trigger:hover {
+  transform: scale(1.02);
+}
+
+.cert-preview:hover .cert-img {
+  transform: scale(1.02);
 }
 
 .cert-placeholder {
@@ -811,11 +839,11 @@ body {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: .65rem;
+  gap: .85rem;
 }
 
 .cert-counter {
-  font-size: .78rem;
+  font-size: .8rem;
   font-weight: 700;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -823,39 +851,41 @@ body {
 }
 
 .cert-slide-title {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   font-weight: 800;
   color: var(--dark);
-  line-height: 1.3;
+  line-height: 1.2;
 }
 
 .cert-slide-issuer {
-  font-size: .9rem;
-  font-weight: 600;
+  font-size: 1rem;
+  font-weight: 700;
   color: var(--primary);
+  letter-spacing: .02em;
 }
 
 .cert-slide-desc {
-  font-size: .92rem;
-  line-height: 1.7;
+  font-size: .95rem;
+  line-height: 1.8;
   color: var(--text-light);
+  max-width: 680px;
 }
 
 .cert-credly-btn {
   display: inline-flex;
   align-items: center;
   gap: .4rem;
-  margin-top: .4rem;
-  padding: .55rem 1.3rem;
-  border-radius: 30px;
+  margin-top: .75rem;
+  padding: .75rem 1.6rem;
+  border-radius: 999px;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
   color: #fff;
-  font-size: .88rem;
+  font-size: .95rem;
   font-weight: 700;
   text-decoration: none;
   width: fit-content;
-  transition: opacity .25s ease, transform .25s ease;
-  box-shadow: var(--shadow-sm);
+  transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 12px 28px rgba(99,102,241,.18);
 }
 
 .cert-credly-btn:hover { opacity: .88; transform: translateY(-2px); }
@@ -1074,8 +1104,15 @@ body {
 ═══════════════════════════════════════ */
 @media (max-width: 900px) {
   /* Stack cert card to single column but keep fixed height */
-  .cert-slide { grid-template-columns: 1fr; min-height: 0; }
-  .cert-preview { min-height: 200px; max-height: 200px; }
+  .cert-slide {
+    grid-template-columns: 1fr;
+    min-height: 360px;
+    padding: 2.5rem;
+  }
+  .cert-preview {
+    min-height: 240px;
+    max-height: 240px;
+  }
 
   /* Show hamburger, hide desktop links */
   .nav-links    { display: none; }
@@ -1112,7 +1149,10 @@ body {
   /* Certificates */
   .cert-slider { gap: .75rem; }
   .cert-arrow  { width: 40px; height: 40px; font-size: 1rem; }
-  .cert-slide  { padding: 1.75rem; min-height: 0; }
+  .cert-slide  {
+    padding: 1.75rem;
+    min-height: 320px;
+  }
 
   /* Contact */
   .contact-methods { grid-template-columns: 1fr 1fr; gap: 1rem; }
@@ -1270,6 +1310,28 @@ body {
 
 .modal-content {
   padding: 1.5rem 2rem 2rem;
+}
+
+.cert-modal-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 0.5rem;
+}
+
+.full-cert-image {
+  width: 100%;
+  max-height: calc(80vh - 180px);
+  object-fit: contain;
+  border-radius: 20px;
+  box-shadow: var(--shadow-sm);
+  background: var(--bg-secondary);
+}
+
+.cert-modal-caption {
+  font-size: 0.95rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
 }
 
 .modal-description {
