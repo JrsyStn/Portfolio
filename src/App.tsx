@@ -239,11 +239,11 @@ function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
-  // Prevent body scroll when menu is open
+  // Prevent body scroll when menu or modals are open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    document.body.style.overflow = (menuOpen || modalOpen || certModalOpen) ? 'hidden' : ''
     return () => { document.body.style.overflow = '' }
-  }, [menuOpen])
+  }, [menuOpen, modalOpen, certModalOpen])
 
   const handleNavClick = (section: string) => {
     setActiveSection(section)
