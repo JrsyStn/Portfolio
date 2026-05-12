@@ -186,6 +186,7 @@ const certificates = [
   },
 ]
 
+
 function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [theme, setTheme] = useState('light')
