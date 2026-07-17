@@ -199,6 +199,7 @@ function App() {
   const [isBadgeDragging, setIsBadgeDragging] = useState(false)
   const [isAboutVisible, setIsAboutVisible] = useState(false)
   const [badgeSwing, setBadgeSwing] = useState({ rotate: -1.4, translateY: 0 })
+  const [revealedSections, setRevealedSections] = useState<Record<string, boolean>>({})
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const aboutSectionRef = useRef<HTMLElement | null>(null)
@@ -267,6 +268,27 @@ function App() {
     }, { threshold: 0.25 })
 
     observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    const sections = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
+    if (!sections.length) return
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const id = entry.target.getAttribute('data-reveal')
+        if (!id) return
+
+        if (entry.isIntersecting) {
+          setRevealedSections(prev => ({ ...prev, [id]: true }))
+        } else if (entry.boundingClientRect.top > window.innerHeight * 0.5) {
+          setRevealedSections(prev => ({ ...prev, [id]: false }))
+        }
+      })
+    }, { threshold: 0.16, rootMargin: '0px 0px -8% 0px' })
+
+    sections.forEach(section => observer.observe(section))
     return () => observer.disconnect()
   }, [])
 
@@ -370,6 +392,7 @@ function App() {
   }
 
   const activeCert = certificates[certIndex]
+  const revealClass = (id: string) => revealedSections[id] ? 'is-visible' : ''
 
   // Derive the active category's projects
   const activeCategory = projectCategories.find(c => c.id === activeCategoryId) ?? projectCategories[0]
@@ -510,7 +533,7 @@ function App() {
       </div>
 
       {/* ── Hero ── */}
-      <section id="home" className="hero-section">
+      <section id="home" className={`hero-section ${revealClass('home')}`} data-reveal="home">
         <div className="hero-content">
           <div className="hero-text">
             <p className="hero-label">Welcome to my portfolio</p>
@@ -540,7 +563,7 @@ function App() {
       </section>
 
       {/* ── About ── */}
-      <section id="about" className="about-section" ref={aboutSectionRef as React.RefObject<HTMLElement>}>
+      <section id="about" className={`about-section ${revealClass('about')}`} ref={aboutSectionRef as React.RefObject<HTMLElement>} data-reveal="about">
         <div className="container">
 
 
@@ -603,7 +626,7 @@ function App() {
       </section>
 
       {/* ── Projects ── */}
-      <section id="projects" className="projects-section" ref={projectSectionRef as React.RefObject<HTMLElement>}>
+      <section id="projects" className={`projects-section ${revealClass('projects')}`} ref={projectSectionRef as React.RefObject<HTMLElement>} data-reveal="projects">
         {/* Title + category tabs inside container */}
         <div className="container">
           <h2 className="section-title">Featured Projects</h2>
@@ -706,7 +729,7 @@ function App() {
       </section>
 
       {/* ── Certificates – single-item slider ── */}
-      <section id="certificates" className="certificates-section">
+      <section id="certificates" className={`certificates-section ${revealClass('certificates')}`} data-reveal="certificates">
         <div className="container">
           <h2 className="section-title">Certificates</h2>
 
@@ -776,7 +799,7 @@ function App() {
       </section>
 
       {/* ── Contact ── */}
-      <section id="contact" className="contact-section">
+      <section id="contact" className={`contact-section ${revealClass('contact')}`} data-reveal="contact">
         <div className="container">
           <h2 className="section-title">Get In Touch</h2>
           <div className="contact-content">

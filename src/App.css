@@ -913,12 +913,8 @@ body::after {
 .projects-section {
   padding: 72px 0 72px;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(17,17,17,.03) 0%, rgba(255,255,255,.48) 100%);
+  background: transparent;
   transition: background .3s ease;
-}
-
-[data-theme="dark"] .projects-section {
-  background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, rgba(17,17,17,.55) 100%);
 }
 
 /* Section title keeps normal container padding */
@@ -1115,12 +1111,8 @@ body::after {
 ═══════════════════════════════════════ */
 .certificates-section {
   padding: 72px 2rem;
-  background: linear-gradient(135deg, rgba(17,17,17,.03) 0%, rgba(255,255,255,.45) 100%);
+  background: transparent;
   transition: background .3s ease;
-}
-
-[data-theme="dark"] .certificates-section {
-  background: linear-gradient(135deg, rgba(255,255,255,.05) 0%, rgba(17,17,17,.5) 100%);
 }
 
 /* Outer row: card with bottom navigation */
@@ -1335,12 +1327,8 @@ body::after {
 ═══════════════════════════════════════ */
 .contact-section {
   padding: 72px 2rem;
-  background: linear-gradient(135deg, rgba(17,17,17,.03) 0%, rgba(255,255,255,.45) 100%);
+  background: transparent;
   transition: background .3s ease;
-}
-
-[data-theme="dark"] .contact-section {
-  background: linear-gradient(135deg, rgba(255,255,255,.06) 0%, rgba(17,17,17,.5) 100%);
 }
 
 .contact-content { text-align: center; }
