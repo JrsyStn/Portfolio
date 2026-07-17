@@ -270,6 +270,13 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  const laceStretch = isBadgeDragging ? Math.min(72, Math.hypot(badgeOffset.x, badgeOffset.y) * 0.18) : 0
+  const laceAngle = isBadgeDragging ? Math.max(-10, Math.min(10, badgeOffset.x * 0.03)) : 0
+  const laceStyle = {
+    ['--lace-stretch' as string]: `${laceStretch}px`,
+    ['--lace-angle' as string]: `${laceAngle}deg`,
+  } as React.CSSProperties
+
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
@@ -310,6 +317,7 @@ function App() {
     }
     badgeDragRef.current.active = false
     setIsBadgeDragging(false)
+    setBadgeOffset({ x: 0, y: 0 })
     setBadgeSwing({ rotate: -1.4, translateY: 0 })
   }
 
@@ -549,7 +557,7 @@ function App() {
                     transform: `translate(${badgeOffset.x}px, ${badgeOffset.y}px) rotate(${badgeSwing.rotate}deg) translateY(${badgeSwing.translateY}px)`,
                   }}
                 >
-                  <div className="badge-lace" />
+                  <div className="badge-lace" style={laceStyle} />
                   <img className="badge-photo" src={profileImage} alt="Jersey Sistona" />
                   <div className="badge-line" />
                   <div className="badge-meta">
