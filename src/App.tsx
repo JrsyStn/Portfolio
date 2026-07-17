@@ -31,10 +31,10 @@ const projectCategories = [
         title: 'MeditrackRx',
         description: 'Medication management app with reminders and tracking features',
         technologies: ['Dart', 'Flutter', 'Firebase'],
-        image: new URL('./assets/projects/image.png', import.meta.url).href,
+        image: new URL('./assets/projects/mrx1.png', import.meta.url).href,
         link: 'https://github.com/JrsyStn/meditrackrx',
         fullDescription: 'MeditrackRx is a comprehensive medication management application built with Flutter and Firebase. The app helps users track their medication schedules, set reminders, and monitor their adherence to prescribed treatments. Key features include customizable reminder notifications, medication history tracking, and integration with Firebase for cloud storage and real-time synchronization across devices.',
-        images: [new URL('./assets/projects/image.png', import.meta.url).href, new URL('./assets/projects/image.png', import.meta.url).href, new URL('./assets/projects/image.png', import.meta.url).href],
+        images: [new URL('./assets/projects/mrx1.png', import.meta.url).href, new URL('./assets/projects/mrx2.jpg', import.meta.url).href, new URL('./assets/projects/mrx3.png', import.meta.url).href, new URL('./assets/projects/mrx4.png', import.meta.url).href, new URL('./assets/projects/mrx5.jpg', import.meta.url).href, new URL('./assets/projects/mrx6.jpg', import.meta.url).href,new URL('./assets/projects/mrx7.jpg', import.meta.url).href, new URL('./assets/projects/mrx8.jpg', import.meta.url).href,],
         features: ['Medication reminders', 'Adherence tracking', 'Firebase integration', 'Cross-platform support'],
         challenges: 'Implementing reliable push notifications and ensuring data privacy compliance.'
       },
@@ -781,17 +781,17 @@ function App() {
           <div className="contact-content">
             <p className="contact-subtitle">I'm always interested in hearing about new projects and opportunities.</p>
             <div className="contact-methods">
-              <a href="mailto:your.email@example.com" className="contact-card">
+              <a href="mailto:jerseysistonawrk@gmail.com" className="contact-card">
                 <div className="contact-icon">✉</div>
                 <h3>Email</h3>
-                <p>your.email@example.com</p>
+                <p>jerseysistonawrk@gmail.com</p>
               </a>
-              <a href="https://linkedin.com" className="contact-card" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card" target="_blank" rel="noopener noreferrer">
                 <div className="contact-icon">in</div>
                 <h3>LinkedIn</h3>
                 <p>Connect with me</p>
               </a>
-              <a href="https://github.com" className="contact-card" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/JrsyStn" className="contact-card" target="_blank" rel="noopener noreferrer">
                 <div className="contact-icon">⚙</div>
                 <h3>GitHub</h3>
                 <p>View my projects</p>
