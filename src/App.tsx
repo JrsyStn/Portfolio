@@ -514,7 +514,19 @@ function App() {
             </div>
           </div>
           <div className="hero-image">
-            <img className="avatar-image" src={profileImage} alt="Jersey Sistona" />
+            <div className="hero-photo-card">
+              <img className="avatar-image" src={profileImage} alt="Jersey Sistona" />
+              <div className="hero-status-card">
+                <div className="hero-status-left">
+                  <span className="hero-status-dot" />
+                  <div className="hero-status-text">
+                    <span className="hero-status-name">Jersey</span>
+                    <span className="hero-status-state">online</span>
+                  </div>
+                </div>
+                <a href="#contact" className="hero-status-button">Contact me</a>
+              </div>
+            </div>
           </div>
         </div>
       </section>
