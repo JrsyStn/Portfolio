@@ -142,15 +142,6 @@ const skillCards = [
 ]
 
 // ─────────────────────────────────────────────
-// ABOUT – bold keywords shown on the left column
-// ─────────────────────────────────────────────
-const aboutKeywords = [
-  { label: 'Dedicated' },
-  { label: 'Creative' },
-  { label: 'Detail-Oriented' }
-]
-
-// ─────────────────────────────────────────────
 // CERTIFICATES DATA
 // Add or remove certificates here.
 // Set `credlyLink` to your real Credly certificate URL.
@@ -204,11 +195,23 @@ function App() {
   const [selectedCertificate, setSelectedCertificate] = useState<any>(null)
   const [introState, setIntroState] = useState<'intro' | 'closing' | 'done'>('intro')
   const [typedIntroText, setTypedIntroText] = useState('')
+  const [badgeOffset, setBadgeOffset] = useState({ x: 0, y: 0 })
+  const [isBadgeDragging, setIsBadgeDragging] = useState(false)
+  const [isAboutVisible, setIsAboutVisible] = useState(false)
+  const [badgeSwing, setBadgeSwing] = useState({ rotate: -1.4, translateY: 0 })
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
+  const aboutSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
   const certTouchStartX = useRef<number | null>(null)
+  const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number }>({
+    active: false,
+    startX: 0,
+    startY: 0,
+    offsetX: 0,
+    offsetY: 0,
+  })
 
   useEffect(() => {
     const savedTheme = localStorage.getItem('theme') || 'light'
@@ -250,11 +253,64 @@ function App() {
     return () => window.removeEventListener('resize', measure)
   }, [])
 
+  useEffect(() => {
+    const node = aboutSectionRef.current
+    if (!node) return
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setIsAboutVisible(true)
+          observer.disconnect()
+        }
+      })
+    }, { threshold: 0.25 })
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
   const toggleTheme = () => {
     const newTheme = theme === 'light' ? 'dark' : 'light'
     setTheme(newTheme)
     localStorage.setItem('theme', newTheme)
     document.documentElement.setAttribute('data-theme', newTheme)
+  }
+
+  const handleBadgePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.currentTarget.setPointerCapture(e.pointerId)
+    badgeDragRef.current = {
+      active: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      offsetX: badgeOffset.x,
+      offsetY: badgeOffset.y,
+    }
+    setIsBadgeDragging(true)
+    setBadgeSwing({ rotate: -0.4, translateY: 0 })
+  }
+
+  const handleBadgePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!badgeDragRef.current.active) return
+    const dx = e.clientX - badgeDragRef.current.startX
+    const dy = e.clientY - badgeDragRef.current.startY
+    const nextX = badgeDragRef.current.offsetX + dx
+    const nextY = badgeDragRef.current.offsetY + dy
+    setBadgeOffset({ x: nextX, y: nextY })
+    setBadgeSwing({
+      rotate: Math.max(-8, Math.min(8, dx * 0.035)),
+      translateY: Math.max(-10, Math.min(10, dy * 0.03)),
+    })
+  }
+
+  const handleBadgePointerUp = (e?: React.PointerEvent<HTMLDivElement>) => {
+    if (e?.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+    badgeDragRef.current.active = false
+    setIsBadgeDragging(false)
+    setBadgeSwing({ rotate: -1.4, translateY: 0 })
   }
 
   // Close menu on resize to desktop
@@ -464,22 +520,34 @@ function App() {
       </section>
 
       {/* ── About ── */}
-      <section id="about" className="about-section">
+      <section id="about" className="about-section" ref={aboutSectionRef as React.RefObject<HTMLElement>}>
         <div className="container">
 
 
-          {/* Two-column: bold keywords | short description */}
           <div className="about-intro">
-            {/* Left – bold keyword pills */}
-            <div className="about-keywords">
-              {aboutKeywords.map(kw => (
-                <div key={kw.label} className="keyword-pill">
-                  <span className="keyword-label">{kw.label}</span>
+            <div className="about-visual">
+              <div className="about-badge-card">
+                <div
+                  className={`about-badge-shell${isBadgeDragging ? ' dragging' : ''}${isAboutVisible ? ' about-visible' : ''}`}
+                  onPointerDown={handleBadgePointerDown}
+                  onPointerMove={handleBadgePointerMove}
+                  onPointerUp={handleBadgePointerUp}
+                  onPointerCancel={handleBadgePointerUp}
+                  style={{
+                    transform: `translate(${badgeOffset.x}px, ${badgeOffset.y}px) rotate(${badgeSwing.rotate}deg) translateY(${badgeSwing.translateY}px)`,
+                  }}
+                >
+                  <div className="badge-lace" />
+                  <img className="badge-photo" src={profileImage} alt="Jersey Sistona" />
+                  <div className="badge-line" />
+                  <div className="badge-meta">
+                    <span className="badge-name">Jersey Sistona</span>
+                    <span className="badge-role">Design • Code • Story</span>
+                  </div>
                 </div>
-              ))}
+              </div>
             </div>
 
-            {/* Right – summary */}
             <div className="about-description">
               <p className="about-desc-text">
                 I'm a <strong>full-stack developer &amp; designer</strong> from the Philippines passionate

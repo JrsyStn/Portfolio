@@ -270,7 +270,10 @@ body {
 ═══════════════════════════════════════ */
 .hero-section {
   margin-top: 70px;
-  padding: 72px 2rem 60px;
+  min-height: calc(100vh - 70px);
+  padding: 96px 2rem 112px;
+  display: flex;
+  align-items: center;
   background: linear-gradient(135deg, rgba(17,17,17,.06) 0%, rgba(255,255,255,.34) 100%);
   transition: background .3s ease;
 }
@@ -281,13 +284,14 @@ body {
 
 /* Two-column grid: text | image */
 .hero-content {
+  width: 100%;
   max-width: 1200px;
   margin: 0 auto;
   display: grid;
-  /* text takes 55 %, image gets 45 % and is pushed right */
   grid-template-columns: 55fr 45fr;
   gap: 3rem;
   align-items: center;
+  min-height: min(720px, calc(100vh - 150px));
 }
 
 /* ── Text column ── */
@@ -402,56 +406,167 @@ body {
    ABOUT SECTION
 ═══════════════════════════════════════ */
 .about-section {
-  padding: 72px 2rem;
+  padding: 112px 2rem 96px;
   background: var(--bg-primary);
   transition: background .3s ease;
 }
 
-/* Two-column intro: keyword pills | short description */
 .about-intro {
   display: grid;
-  grid-template-columns: 1fr 1.4fr;
-  gap: 3rem;
-  align-items: start;
+  grid-template-columns: minmax(280px, 420px) 1fr;
+  gap: 3.5rem;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-/* ── Left: keyword pills ── */
-.about-keywords {
+.about-visual {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 360px;
+}
+
+.about-badge-card {
+  position: relative;
+  width: min(100%, 360px);
+  padding: 1rem;
+}
+
+.about-badge-shell {
+  position: relative;
   display: flex;
   flex-direction: column;
-  gap: .9rem;
-}
-
-.keyword-pill {
-  display: flex;
   align-items: center;
-  gap: .75rem;
-  padding: .85rem 1.2rem;
-  background: var(--light);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  box-shadow: var(--shadow-sm);
-  transition: transform .25s ease, box-shadow .25s ease, border-color .25s ease;
-  cursor: default;
+  gap: 0.9rem;
+  padding: 1.3rem 1.3rem 1.2rem;
+  margin-top: 1rem;
+  border-radius: 24px;
+  border: 1px solid rgba(17,17,17,0.12);
+  background: linear-gradient(135deg, rgba(255,255,255,0.95), rgba(242,242,242,0.92));
+  box-shadow: 0 16px 50px rgba(0,0,0,0.16);
+  transform-origin: top center;
+  opacity: 0;
+  transform: translate3d(0, -70px, 0) rotate(-6deg) scale(0.96);
+  touch-action: none;
+  cursor: grab;
+  user-select: none;
+  overflow: visible;
+  animation: idleSwing 2.8s ease-in-out infinite;
+  animation-play-state: running;
+  will-change: transform;
 }
 
-.keyword-pill:hover {
-  transform: translateX(6px);
-  box-shadow: var(--shadow);
-  border-color: var(--primary);
+.about-badge-shell.about-visible {
+  opacity: 1;
+  animation: badgeDrop 1s cubic-bezier(.2,.8,.2,1) both;
 }
 
-.keyword-emoji {
-  font-size: 1.35rem;
-  line-height: 1;
-  flex-shrink: 0;
+.about-badge-shell::before {
+  content: '';
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  width: 78%;
+  height: 14px;
+  border-radius: 999px;
+  transform: translateX(-50%) rotate(-3deg);
+  background: linear-gradient(90deg, rgba(17,17,17,0.92), rgba(17,17,17,0.24));
+  box-shadow: 0 8px 18px rgba(0,0,0,0.15);
 }
 
-.keyword-label {
+.about-badge-shell::after {
+  content: '';
+  position: absolute;
+  top: -44px;
+  left: 50%;
+  width: 2px;
+  height: 36px;
+  transform: translateX(-50%);
+  background: linear-gradient(180deg, rgba(17,17,17,0.95), rgba(17,17,17,0.2));
+  box-shadow: 0 0 10px rgba(0,0,0,0.08);
+}
+
+.about-badge-shell.dragging {
+  cursor: grabbing;
+  box-shadow: 0 22px 55px rgba(0,0,0,0.24);
+  animation: none;
+  transition: box-shadow 0.2s ease;
+}
+
+[data-theme="dark"] .about-badge-shell {
+  background: linear-gradient(135deg, rgba(255,255,255,0.09), rgba(255,255,255,0.04));
+  border-color: rgba(255,255,255,0.14);
+  box-shadow: 0 20px 50px rgba(0,0,0,0.38);
+}
+
+.badge-lace {
+  width: 72%;
+  height: 12px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(17,17,17,0.9), rgba(17,17,17,0.25));
+  opacity: 0.9;
+}
+
+.badge-photo {
+  width: 100%;
+  max-width: 220px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 22px;
+  border: 2px solid rgba(17,17,17,0.12);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.35);
+}
+
+.badge-line {
+  width: 60%;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, transparent, var(--text), transparent);
+  opacity: 0.4;
+}
+
+.badge-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.badge-name {
   font-size: 1.05rem;
   font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text);
-  letter-spacing: .02em;
+}
+
+.badge-role {
+  font-size: 0.84rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--text-light);
+}
+
+@keyframes badgeDrop {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, -90px, 0) rotate(-6deg) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) rotate(0deg) scale(1);
+  }
+}
+
+@keyframes idleSwing {
+  0%, 100% {
+    transform: rotate(-1.4deg) translateY(0);
+  }
+  50% {
+    transform: rotate(1.6deg) translateY(-4px);
+  }
 }
 
 /* ── Right: short description ── */
