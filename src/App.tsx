@@ -202,6 +202,8 @@ function App() {
   const [selectedProject, setSelectedProject] = useState<any>(null)
   const [certModalOpen, setCertModalOpen] = useState(false)
   const [selectedCertificate, setSelectedCertificate] = useState<any>(null)
+  const [introState, setIntroState] = useState<'intro' | 'closing' | 'done'>('intro')
+  const [typedIntroText, setTypedIntroText] = useState('')
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
@@ -212,6 +214,29 @@ function App() {
     const savedTheme = localStorage.getItem('theme') || 'light'
     setTheme(savedTheme)
     document.documentElement.setAttribute('data-theme', savedTheme)
+  }, [])
+
+  useEffect(() => {
+    const introMessage = 'Welcome to my portfolio'
+    let currentLength = 0
+
+    const typingInterval = window.setInterval(() => {
+      currentLength += 1
+      setTypedIntroText(introMessage.slice(0, currentLength))
+
+      if (currentLength >= introMessage.length) {
+        window.clearInterval(typingInterval)
+      }
+    }, 90)
+
+    const closeTimer = window.setTimeout(() => setIntroState('closing'), 3800)
+    const doneTimer = window.setTimeout(() => setIntroState('done'), 4600)
+
+    return () => {
+      window.clearInterval(typingInterval)
+      window.clearTimeout(closeTimer)
+      window.clearTimeout(doneTimer)
+    }
   }, [])
 
   useEffect(() => {
@@ -358,6 +383,20 @@ function App() {
 
   return (
     <div className="app">
+      {introState !== 'done' && (
+        <div className={`cinematic-intro ${introState === 'closing' ? 'closing' : ''}`} aria-hidden="true">
+          <div className="intro-orb orb-one" />
+          <div className="intro-orb orb-two" />
+          <div className="intro-panel">
+            <p className="intro-badge">Opening sequence</p>
+            <h1 className="intro-title">
+              {typedIntroText}
+              <span className="intro-cursor" />
+            </h1>
+            <p className="intro-subtitle">A cinematic showcase of design, code, and creativity.</p>
+          </div>
+        </div>
+      )}
 
       {/* ── Navigation ── */}
       <nav className="navbar">
