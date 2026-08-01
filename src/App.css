@@ -757,13 +757,17 @@ body::after {
   overflow: hidden;
   position: relative;
   padding: 1rem 0;
+  touch-action: none;
+  user-select: none;
 }
 
 .skill-track {
   display: flex;
   gap: 1rem;
   width: max-content;
-  animation: slide-skills 22s linear infinite;
+  will-change: transform;
+  cursor: grab;
+  touch-action: none;
 }
 
 .skill-card {

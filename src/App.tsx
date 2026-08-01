@@ -199,10 +199,14 @@ function App() {
   const [isBadgeDragging, setIsBadgeDragging] = useState(false)
   const [isAboutVisible, setIsAboutVisible] = useState(false)
   const [badgeSwing, setBadgeSwing] = useState({ rotate: -1.4, translateY: 0 })
+  const [skillsOffset, setSkillsOffset] = useState(0)
+  const [loopWidth, setLoopWidth] = useState(0)
+  const [isSkillsDragging, setIsSkillsDragging] = useState(false)
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const aboutSectionRef = useRef<HTMLElement | null>(null)
   const trackRef = useRef<HTMLDivElement | null>(null)
+  const skillTrackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
   const certTouchStartX = useRef<number | null>(null)
   const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number }>({
@@ -211,6 +215,11 @@ function App() {
     startY: 0,
     offsetX: 0,
     offsetY: 0,
+  })
+  const skillDragRef = useRef<{ active: boolean; startX: number; startOffset: number }>({
+    active: false,
+    startX: 0,
+    startOffset: 0,
   })
 
   useEffect(() => {
@@ -270,6 +279,40 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    const measureSkills = () => {
+      if (skillTrackRef.current) {
+        const fullWidth = skillTrackRef.current.scrollWidth
+        setLoopWidth(fullWidth > 0 ? fullWidth / 2 : 0)
+      }
+    }
+
+    measureSkills()
+    window.addEventListener('resize', measureSkills)
+    return () => window.removeEventListener('resize', measureSkills)
+  }, [])
+
+  useEffect(() => {
+    if (isSkillsDragging || loopWidth <= 0) return
+
+    let raf = 0
+    let lastTime: number | null = null
+
+    const step = (time: number) => {
+      if (lastTime === null) lastTime = time
+      const elapsed = (time - lastTime) / 1000
+      lastTime = time
+      setSkillsOffset((prev) => {
+        const next = prev - elapsed * 95
+        return next <= -loopWidth ? 0 : next
+      })
+      raf = window.requestAnimationFrame(step)
+    }
+
+    raf = window.requestAnimationFrame(step)
+    return () => window.cancelAnimationFrame(raf)
+  }, [isSkillsDragging, loopWidth])
+
   const laceStretch = isBadgeDragging ? Math.min(72, Math.hypot(badgeOffset.x, badgeOffset.y) * 0.18) : 0
   const laceAngle = isBadgeDragging ? Math.max(-10, Math.min(10, badgeOffset.x * 0.03)) : 0
   const laceStyle = {
@@ -319,6 +362,32 @@ function App() {
     setIsBadgeDragging(false)
     setBadgeOffset({ x: 0, y: 0 })
     setBadgeSwing({ rotate: -1.4, translateY: 0 })
+  }
+
+  const handleSkillsPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.preventDefault()
+    e.currentTarget.setPointerCapture(e.pointerId)
+    skillDragRef.current = {
+      active: true,
+      startX: e.clientX,
+      startOffset: skillsOffset,
+    }
+    setIsSkillsDragging(true)
+  }
+
+  const handleSkillsPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!skillDragRef.current.active) return
+    const deltaX = e.clientX - skillDragRef.current.startX
+    const nextOffset = skillDragRef.current.startOffset + deltaX
+    setSkillsOffset(nextOffset <= -loopWidth ? -loopWidth : nextOffset >= 0 ? 0 : nextOffset)
+  }
+
+  const handleSkillsPointerUp = (e?: React.PointerEvent<HTMLDivElement>) => {
+    if (e?.currentTarget.hasPointerCapture(e.pointerId)) {
+      e.currentTarget.releasePointerCapture(e.pointerId)
+    }
+    skillDragRef.current.active = false
+    setIsSkillsDragging(false)
   }
 
   // Close menu on resize to desktop
@@ -581,8 +650,18 @@ function App() {
           {/* ── Skills Carousel ── */}
           <div id="skills" className="about-skills">
             <h3 className="section-title">Skills</h3>
-            <div className="skills-carousel">
-              <div className="skill-track">
+            <div
+              className="skills-carousel"
+              onPointerDown={handleSkillsPointerDown}
+              onPointerMove={handleSkillsPointerMove}
+              onPointerUp={handleSkillsPointerUp}
+              onPointerCancel={handleSkillsPointerUp}
+            >
+              <div
+                className="skill-track"
+                ref={skillTrackRef}
+                style={{ transform: `translateX(${skillsOffset}px)` }}
+              >
                 {skillCards.concat(skillCards).map((skill, idx) => (
                   <div key={`${skill.name}-${idx}`} className="skill-card">
                     <div className="skill-icon">
