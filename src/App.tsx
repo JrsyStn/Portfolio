@@ -279,6 +279,12 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  const wrapSkillsOffset = (value: number) => {
+    if (loopWidth <= 0) return 0
+    const wrapped = ((value % loopWidth) + loopWidth) % loopWidth
+    return wrapped > 0 ? wrapped - loopWidth : wrapped
+  }
+
   useEffect(() => {
     const measureSkills = () => {
       if (skillTrackRef.current) {
@@ -302,10 +308,7 @@ function App() {
       if (lastTime === null) lastTime = time
       const elapsed = (time - lastTime) / 1000
       lastTime = time
-      setSkillsOffset((prev) => {
-        const next = prev - elapsed * 95
-        return next <= -loopWidth ? 0 : next
-      })
+      setSkillsOffset((prev) => wrapSkillsOffset(prev - elapsed * 95))
       raf = window.requestAnimationFrame(step)
     }
 
@@ -379,7 +382,7 @@ function App() {
     if (!skillDragRef.current.active) return
     const deltaX = e.clientX - skillDragRef.current.startX
     const nextOffset = skillDragRef.current.startOffset + deltaX
-    setSkillsOffset(nextOffset <= -loopWidth ? -loopWidth : nextOffset >= 0 ? 0 : nextOffset)
+    setSkillsOffset(wrapSkillsOffset(nextOffset))
   }
 
   const handleSkillsPointerUp = (e?: React.PointerEvent<HTMLDivElement>) => {
