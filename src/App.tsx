@@ -209,13 +209,16 @@ function App() {
   const skillTrackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
   const certTouchStartX = useRef<number | null>(null)
-  const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number }>({
+  const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number; lastX: number; lastY: number }>({
     active: false,
     startX: 0,
     startY: 0,
     offsetX: 0,
     offsetY: 0,
+    lastX: 0,
+    lastY: 0,
   })
+  const badgeMotionRef = useRef({ x: 0, y: 0, velocityX: 0, velocityY: 0 })
   const skillDragRef = useRef<{ active: boolean; startX: number; startOffset: number }>({
     active: false,
     startX: 0,
@@ -279,6 +282,50 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  useEffect(() => {
+    if (isBadgeDragging) return
+
+    let raf = 0
+    let lastTime: number | null = null
+
+    const step = (time: number) => {
+      if (lastTime === null) lastTime = time
+      const elapsed = Math.min(0.034, (time - lastTime) / 1000)
+      lastTime = time
+
+      const motion = badgeMotionRef.current
+      const springX = (0 - motion.x) * 0.14
+      const springY = (0 - motion.y) * 0.11
+
+      motion.velocityX += springX * elapsed * 60
+      motion.velocityY += springY * elapsed * 60
+      motion.velocityX *= Math.pow(0.88, elapsed * 60)
+      motion.velocityY *= Math.pow(0.88, elapsed * 60)
+      motion.x += motion.velocityX * elapsed * 60
+      motion.y += motion.velocityY * elapsed * 60
+
+      const sway = Math.max(-8, Math.min(8, motion.x * 0.04 + motion.velocityX * 0.04))
+      const bob = Math.max(-8, Math.min(8, motion.y * 0.018 + motion.velocityY * 0.012))
+
+      setBadgeOffset({ x: motion.x, y: motion.y })
+      setBadgeSwing({ rotate: sway, translateY: bob })
+
+      if (Math.abs(motion.x) < 0.02 && Math.abs(motion.y) < 0.02 && Math.abs(motion.velocityX) < 0.02 && Math.abs(motion.velocityY) < 0.02) {
+        motion.x = 0
+        motion.y = 0
+        motion.velocityX = 0
+        motion.velocityY = 0
+        setBadgeOffset({ x: 0, y: 0 })
+        setBadgeSwing({ rotate: -1.4, translateY: 0 })
+      } else {
+        raf = window.requestAnimationFrame(step)
+      }
+    }
+
+    raf = window.requestAnimationFrame(step)
+    return () => window.cancelAnimationFrame(raf)
+  }, [isBadgeDragging])
+
   const wrapSkillsOffset = (value: number) => {
     if (loopWidth <= 0) return 0
     const wrapped = ((value % loopWidth) + loopWidth) % loopWidth
@@ -316,8 +363,8 @@ function App() {
     return () => window.cancelAnimationFrame(raf)
   }, [isSkillsDragging, loopWidth])
 
-  const laceStretch = isBadgeDragging ? Math.min(72, Math.hypot(badgeOffset.x, badgeOffset.y) * 0.18) : 0
-  const laceAngle = isBadgeDragging ? Math.max(-10, Math.min(10, badgeOffset.x * 0.03)) : 0
+  const laceStretch = Math.min(72, Math.hypot(badgeOffset.x, badgeOffset.y) * 0.18 + Math.abs(badgeSwing.rotate) * 1.6)
+  const laceAngle = Math.max(-10, Math.min(10, badgeOffset.x * 0.03 + badgeSwing.rotate * 0.25))
   const laceStyle = {
     ['--lace-stretch' as string]: `${laceStretch}px`,
     ['--lace-angle' as string]: `${laceAngle}deg`,
@@ -339,6 +386,14 @@ function App() {
       startY: e.clientY,
       offsetX: badgeOffset.x,
       offsetY: badgeOffset.y,
+      lastX: e.clientX,
+      lastY: e.clientY,
+    }
+    badgeMotionRef.current = {
+      x: badgeOffset.x,
+      y: badgeOffset.y,
+      velocityX: 0,
+      velocityY: 0,
     }
     setIsBadgeDragging(true)
     setBadgeSwing({ rotate: -0.4, translateY: 0 })
@@ -350,6 +405,18 @@ function App() {
     const dy = e.clientY - badgeDragRef.current.startY
     const nextX = badgeDragRef.current.offsetX + dx
     const nextY = badgeDragRef.current.offsetY + dy
+    const velocityX = (e.clientX - badgeDragRef.current.lastX) * 0.18
+    const velocityY = (e.clientY - badgeDragRef.current.lastY) * 0.18
+
+    badgeDragRef.current.lastX = e.clientX
+    badgeDragRef.current.lastY = e.clientY
+    badgeMotionRef.current = {
+      x: nextX,
+      y: nextY,
+      velocityX,
+      velocityY,
+    }
+
     setBadgeOffset({ x: nextX, y: nextY })
     setBadgeSwing({
       rotate: Math.max(-8, Math.min(8, dx * 0.035)),
@@ -363,8 +430,6 @@ function App() {
     }
     badgeDragRef.current.active = false
     setIsBadgeDragging(false)
-    setBadgeOffset({ x: 0, y: 0 })
-    setBadgeSwing({ rotate: -1.4, translateY: 0 })
   }
 
   const handleSkillsPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -882,13 +947,6 @@ function App() {
           </div>
         </div>
       </section>
-
-      {/* ── Footer ── */}
-      <footer className="footer">
-        <div className="container">
-          <p>&copy; 2026 My Portfolio. All rights reserved.</p>
-        </div>
-      </footer>
 
       {/* ── Project Modal ── */}
       {modalOpen && selectedProject && (

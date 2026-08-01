@@ -1354,19 +1354,6 @@ body::after {
 .contact-card p  { color: var(--text-light); font-size: .95rem; }
 
 /* ═══════════════════════════════════════
-   FOOTER
-═══════════════════════════════════════ */
-.footer {
-  background: var(--dark);
-  color: var(--light);
-  padding: 2rem;
-  text-align: center;
-  transition: all .3s ease;
-}
-
-.footer p { opacity: .8; }
-
-/* ═══════════════════════════════════════
    NAV-RIGHT WRAPPER (theme toggle + hamburger grouped)
 ═══════════════════════════════════════ */
 .nav-right {
