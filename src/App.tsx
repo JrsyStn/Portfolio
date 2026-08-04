@@ -513,7 +513,13 @@ function App() {
   const projects = activeCategory.projects
   const n = projects.length
 
-  const pCardWidth = sectionWidth > 0 ? sectionWidth * 0.60 : 0
+  const isMobileView = typeof window !== 'undefined' && window.innerWidth <= 768
+  const pCardWidth = sectionWidth > 0
+    ? Math.min(
+        sectionWidth * (isMobileView ? 0.88 : 0.60),
+        isMobileView ? sectionWidth - 24 : sectionWidth * 0.60
+      )
+    : 0
   const pGap = 24
   const pCardStep = pCardWidth + pGap
   const pCenterOff = sectionWidth > 0 ? (sectionWidth - pCardWidth) / 2 : 0
@@ -869,7 +875,7 @@ function App() {
                       onClick={() => openCertModal(activeCert)}
                       aria-label="View full certificate image"
                     >
-                      See Image
+                      View More
                     </button>
                   </>
                 ) : (
