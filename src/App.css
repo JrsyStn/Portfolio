@@ -1048,10 +1048,12 @@ body::after {
   color: var(--dark);
   min-height: 3.2rem;
   max-height: 3.2rem;
-  display: flex;
-  align-items: flex-start;
-  margin: 0;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   overflow: hidden;
+  margin: 0;
 }
 
 .project-description {
@@ -1167,7 +1169,7 @@ body::after {
   padding: 3rem;
   box-shadow: 0 22px 50px rgba(0,0,0,.08);
   animation: certFadeIn .35s ease;
-  min-height: 400px;
+  min-height: 430px;
   align-items: stretch;
 }
 
@@ -1241,11 +1243,11 @@ body::after {
 
 /* Right column – info */
 .cert-info {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
+  display: grid;
+  grid-template-rows: auto auto auto 1fr auto;
   gap: .85rem;
   min-height: 0;
+  align-content: start;
 }
 
 .cert-counter {
@@ -1261,6 +1263,13 @@ body::after {
   font-weight: 800;
   color: var(--dark);
   line-height: 1.2;
+  min-height: 3.4rem;
+  max-height: 3.4rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
 }
 
 .cert-slide-issuer {
@@ -1268,6 +1277,9 @@ body::after {
   font-weight: 700;
   color: var(--primary);
   letter-spacing: .02em;
+  min-height: 1.3rem;
+  max-height: 1.3rem;
+  overflow: hidden;
 }
 
 .cert-slide-desc {
@@ -1280,6 +1292,10 @@ body::after {
   overflow: hidden;
   position: relative;
   padding-bottom: .2rem;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+  line-clamp: 5;
 }
 
 .cert-slide-desc::after {
@@ -1297,7 +1313,7 @@ body::after {
   display: inline-flex;
   align-items: center;
   gap: .4rem;
-  margin-top: .75rem;
+  margin-top: auto;
   padding: .75rem 1.6rem;
   border-radius: 999px;
   background: linear-gradient(135deg, var(--dark), var(--primary-light));
@@ -1308,6 +1324,7 @@ body::after {
   width: fit-content;
   transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
   box-shadow: 0 12px 28px rgba(0,0,0,.12);
+  align-self: start;
 }
 
 .cert-credly-btn:hover { opacity: .88; transform: translateY(-2px); }
