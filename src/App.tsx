@@ -1016,11 +1016,28 @@ function App() {
             </div>
 
             <div className="modal-content cert-modal-content">
-              <img
-                src={selectedCertificate.image}
-                alt={`${selectedCertificate.title} full certificate`}
-                className="full-cert-image"
-              />
+              <div className="cert-modal-body">
+                <div className="cert-modal-image-wrap">
+                  <img
+                    src={selectedCertificate.image}
+                    alt={`${selectedCertificate.title} full certificate`}
+                    className="full-cert-image"
+                  />
+                </div>
+                <div className="cert-modal-details">
+                  <p className="cert-modal-description">{selectedCertificate.description}</p>
+                  <div className="modal-actions">
+                    <a
+                      href={selectedCertificate.credlyLink}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="modal-link-btn"
+                    >
+                      View on Credly →
+                    </a>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
