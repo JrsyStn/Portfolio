@@ -291,6 +291,23 @@ function App() {
   }, [])
 
   useEffect(() => {
+    const elements = document.querySelectorAll<HTMLElement>('[data-reveal]')
+    if (!elements.length) return
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('is-revealed')
+          observer.unobserve(entry.target)
+        }
+      })
+    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' })
+
+    elements.forEach((element) => observer.observe(element))
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
     if (isBadgeDragging) return
 
     let raf = 0
@@ -702,7 +719,7 @@ function App() {
       {/* ── Hero ── */}
       <section id="home" className="hero-section">
         <div className="hero-content">
-          <div className="hero-text">
+          <div className="hero-text" data-reveal="left">
             <p className="hero-label">Welcome to my portfolio</p>
             <h1 className="hero-title">Hi, I'm<br />Jersey Sistona</h1>
             <p className="hero-subtitle">Designer &amp; Developer</p>
@@ -711,7 +728,7 @@ function App() {
               <a href="#contact" className="btn btn-secondary">Get In Touch</a>
             </div>
           </div>
-          <div className="hero-image">
+          <div className="hero-image" data-reveal="right">
             <div className="hero-photo-card">
               <img className="avatar-image" src={profileImage} alt="Jersey Sistona" />
               <div className="hero-status-card">
@@ -735,7 +752,7 @@ function App() {
 
 
           <div className="about-intro">
-            <div className="about-visual">
+            <div className="about-visual" data-reveal="left">
               <div className="about-badge-card">
                 <div
                   className={`about-badge-shell${isBadgeDragging ? ' dragging' : ''}${isAboutVisible ? ' about-visible' : ''}`}
@@ -758,7 +775,7 @@ function App() {
               </div>
             </div>
 
-            <div className="about-description">
+            <div className="about-description" data-reveal="right">
               <p className="about-desc-text">
                 I'm a <strong>full-stack developer &amp; designer</strong> from the Philippines passionate
                 about crafting clean, user-friendly digital experiences. I work at the intersection of
@@ -770,7 +787,7 @@ function App() {
 
           {/* ── Skills Carousel ── */}
           <div id="skills" className="about-skills">
-            <h3 className="section-title">Skills</h3>
+            <h3 className="section-title" data-reveal="up">Skills</h3>
             <div
               className="skills-carousel"
               onPointerDown={handleSkillsPointerDown}
@@ -784,7 +801,12 @@ function App() {
                 style={{ transform: `translateX(${skillsOffset}px)` }}
               >
                 {skillCards.concat(skillCards).map((skill, idx) => (
-                  <div key={`${skill.name}-${idx}`} className="skill-card">
+                  <div
+                    key={`${skill.name}-${idx}`}
+                    className="skill-card"
+                    data-reveal="up"
+                    style={{ transitionDelay: `${idx * 70}ms` }}
+                  >
                     <div className="skill-icon">
                       <img
                         className="skill-img"
@@ -806,7 +828,7 @@ function App() {
       <section id="projects" className="projects-section" ref={projectSectionRef as React.RefObject<HTMLElement>}>
         {/* Title + category tabs inside container */}
         <div className="container">
-          <h2 className="section-title">Featured Projects</h2>
+          <h2 className="section-title" data-reveal="up">Featured Projects</h2>
 
           {/* ── Category tab bar ── */}
           <div className="project-category-tabs" role="tablist" aria-label="Project categories">
@@ -818,6 +840,8 @@ function App() {
                 aria-selected={cat.id === activeCategoryId}
                 className={`category-tab${cat.id === activeCategoryId ? ' category-tab-active' : ''}`}
                 onClick={() => switchCategory(cat.id)}
+                data-reveal="up"
+                style={{ transitionDelay: `${cat.id === activeCategoryId ? 0 : 80}ms` }}
               >
                 <span className="category-tab-label">{cat.label}</span>
                 <span className="category-tab-count">{cat.projects.length}</span>
@@ -842,7 +866,8 @@ function App() {
                 <div
                   key={`${project.id}-${idx}`}
                   className={`project-card project-slide${isActive ? ' project-slide-active' : ''}`}
-                  style={pCardWidth ? { width: `${pCardWidth}px` } : undefined}
+                  data-reveal={idx % 2 === 0 ? 'left' : 'right'}
+                  style={pCardWidth ? { width: `${pCardWidth}px`, transitionDelay: `${idx * 70}ms` } : { transitionDelay: `${idx * 70}ms` }}
                   onClick={() => {
                     if (idx < currentIndex) { goPrev() }
                     else if (idx > currentIndex) { goNext() }
@@ -907,12 +932,12 @@ function App() {
       {/* ── Certificates – single-item slider ── */}
       <section id="certificates" className="certificates-section">
         <div className="container">
-          <h2 className="section-title">Certificates</h2>
+          <h2 className="section-title" data-reveal="up">Certificates</h2>
 
           <div className="cert-slider" onTouchStart={onCertTouchStart} onTouchEnd={onCertTouchEnd}>
-            <div className="cert-slide" key={activeCert.id}>
+            <div className="cert-slide" key={activeCert.id} data-reveal="up">
               {/* Certificate image (or placeholder if no image) */}
-              <div className="cert-preview">
+              <div className="cert-preview" data-reveal="left">
                 {activeCert.image ? (
                   <>
                     <img src={activeCert.image} alt={activeCert.title} className="cert-img" />
@@ -934,7 +959,7 @@ function App() {
               </div>
 
               {/* Info */}
-              <div className="cert-info">
+              <div className="cert-info" data-reveal="right">
                 <h3 className="cert-slide-title">{activeCert.title}</h3>
                 <p className="cert-slide-issuer">{activeCert.issuer} · {activeCert.date}</p>
                 <p className="cert-slide-desc">{activeCert.description}</p>
@@ -977,21 +1002,21 @@ function App() {
       {/* ── Contact ── */}
       <section id="contact" className="contact-section">
         <div className="container">
-          <h2 className="section-title">Get In Touch</h2>
+          <h2 className="section-title" data-reveal="up">Get In Touch</h2>
           <div className="contact-content">
-            <p className="contact-subtitle">I'm always interested in hearing about new projects and opportunities.</p>
+            <p className="contact-subtitle" data-reveal="up">I'm always interested in hearing about new projects and opportunities.</p>
             <div className="contact-methods">
-              <button type="button" className="contact-card" onClick={copyEmail}>
+              <button type="button" className="contact-card" onClick={copyEmail} data-reveal="up" style={{ transitionDelay: '0ms' }}>
                 <div className="contact-icon">✉</div>
                 <h3>Email</h3>
                 <p>{copiedEmail ? 'Email copied!' : 'jerseysistonawrk@gmail.com'}</p>
               </button>
-              <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card" target="_blank" rel="noopener noreferrer">
+              <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '120ms' }}>
                 <div className="contact-icon">in</div>
                 <h3>LinkedIn</h3>
                 <p>Connect with me</p>
               </a>
-              <a href="https://github.com/JrsyStn" className="contact-card" target="_blank" rel="noopener noreferrer">
+              <a href="https://github.com/JrsyStn" className="contact-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '240ms' }}>
                 <div className="contact-icon">⚙</div>
                 <h3>GitHub</h3>
                 <p>View my projects</p>
