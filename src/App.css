@@ -951,8 +951,8 @@ body::after {
 
 /* Category switch: fade + slight drop */
 .project-slider-outer.category-switching {
-  opacity: 0;
-  transform: translateY(10px) scale(0.98);
+  opacity: 0.4;
+  transform: translateY(6px) scale(0.985);
   pointer-events: none;
 }
 

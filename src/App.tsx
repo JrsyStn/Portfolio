@@ -209,6 +209,7 @@ function App() {
   const trackRef = useRef<HTMLDivElement | null>(null)
   const skillTrackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
+  const categorySwitchTimerRef = useRef<number | null>(null)
   const certTouchStartX = useRef<number | null>(null)
   const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number; lastX: number; lastY: number }>({
     active: false,
@@ -290,6 +291,19 @@ function App() {
     return () => observer.disconnect()
   }, [])
 
+  const revealElements = () => {
+    const elements = Array.from(document.querySelectorAll<HTMLElement>('[data-reveal]'))
+    elements.forEach((element) => {
+      if (element.classList.contains('is-revealed')) return
+
+      const rect = element.getBoundingClientRect()
+      const isVisible = rect.top < window.innerHeight * 0.95 && rect.bottom > 0 && rect.left < window.innerWidth && rect.right > 0
+      if (isVisible) {
+        element.classList.add('is-revealed')
+      }
+    })
+  }
+
   useEffect(() => {
     const elements = document.querySelectorAll<HTMLElement>('[data-reveal]')
     if (!elements.length) return
@@ -301,11 +315,23 @@ function App() {
           observer.unobserve(entry.target)
         }
       })
-    }, { threshold: 0.15, rootMargin: '0px 0px -8% 0px' })
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' })
 
     elements.forEach((element) => observer.observe(element))
-    return () => observer.disconnect()
-  }, [])
+    revealElements()
+
+    const retryTimer = window.setTimeout(() => revealElements(), 220)
+    const handleScrollOrResize = () => revealElements()
+    window.addEventListener('scroll', handleScrollOrResize, { passive: true })
+    window.addEventListener('resize', handleScrollOrResize)
+
+    return () => {
+      observer.disconnect()
+      window.clearTimeout(retryTimer)
+      window.removeEventListener('scroll', handleScrollOrResize)
+      window.removeEventListener('resize', handleScrollOrResize)
+    }
+  }, [activeCategoryId, certIndex, activeSection, currentIndex, menuOpen, modalOpen, certModalOpen, isCategorySwitching])
 
   useEffect(() => {
     if (isBadgeDragging) return
@@ -520,6 +546,12 @@ function App() {
     return () => window.removeEventListener('resize', onResize)
   }, [])
 
+  useEffect(() => () => {
+    if (categorySwitchTimerRef.current !== null) {
+      window.clearTimeout(categorySwitchTimerRef.current)
+    }
+  }, [])
+
   // Prevent body scroll when menu or modals are open
   useEffect(() => {
     document.body.style.overflow = (menuOpen || modalOpen || certModalOpen) ? 'hidden' : ''
@@ -605,22 +637,24 @@ function App() {
 
   // Switch category: fade out → swap → fade in
   const switchCategory = (id: string) => {
-    if (id === activeCategoryId) return
+    if (id === activeCategoryId || isCategorySwitching) return
 
-    // Phase 1 – fade out current carousel
+    if (categorySwitchTimerRef.current !== null) {
+      window.clearTimeout(categorySwitchTimerRef.current)
+    }
+
     setIsCategorySwitching(true)
 
-    setTimeout(() => {
-      // Phase 2 – swap content while invisible, reset to first item
+    categorySwitchTimerRef.current = window.setTimeout(() => {
       setActiveCategoryId(id)
       setIsAnimating(false)
       setCurrentIndex(0)
 
-      // Phase 3 – fade back in
       requestAnimationFrame(() => requestAnimationFrame(() => {
         setIsCategorySwitching(false)
+        categorySwitchTimerRef.current = null
       }))
-    }, 240)  // matches CSS fade-out duration
+    }, 220)
   }
 
   const openProjectModal = (project: any) => {
