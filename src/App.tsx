@@ -202,6 +202,7 @@ function App() {
   const [skillsOffset, setSkillsOffset] = useState(0)
   const [loopWidth, setLoopWidth] = useState(0)
   const [isSkillsDragging, setIsSkillsDragging] = useState(false)
+  const [copiedEmail, setCopiedEmail] = useState(false)
 
   const projectSectionRef = useRef<HTMLElement | null>(null)
   const aboutSectionRef = useRef<HTMLElement | null>(null)
@@ -230,6 +231,13 @@ function App() {
     setTheme(savedTheme)
     document.documentElement.setAttribute('data-theme', savedTheme)
   }, [])
+
+  useEffect(() => {
+    if (!copiedEmail) return
+
+    const timeout = window.setTimeout(() => setCopiedEmail(false), 1800)
+    return () => window.clearTimeout(timeout)
+  }, [copiedEmail])
 
   useEffect(() => {
     const introMessage = 'Welcome to my portfolio'
@@ -380,6 +388,26 @@ function App() {
   const handleBadgePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.preventDefault()
     e.currentTarget.setPointerCapture(e.pointerId)
+    if (window.innerWidth <= 768) {
+      badgeDragRef.current = {
+        active: true,
+        startX: e.clientX,
+        startY: e.clientY,
+        offsetX: badgeOffset.x,
+        offsetY: badgeOffset.y,
+        lastX: e.clientX,
+        lastY: e.clientY,
+      }
+      badgeMotionRef.current = {
+        x: badgeOffset.x,
+        y: badgeOffset.y,
+        velocityX: 0,
+        velocityY: 0,
+      }
+      setIsBadgeDragging(true)
+      setBadgeSwing({ rotate: -0.4, translateY: 0 })
+      return
+    }
     badgeDragRef.current = {
       active: true,
       startX: e.clientX,
@@ -403,6 +431,16 @@ function App() {
     if (!badgeDragRef.current.active) return
     const dx = e.clientX - badgeDragRef.current.startX
     const dy = e.clientY - badgeDragRef.current.startY
+
+    if (window.innerWidth <= 768) {
+      const absX = Math.abs(dx)
+      const absY = Math.abs(dy)
+      if (absY > absX && absY > 8) {
+        badgeDragRef.current.active = false
+        setIsBadgeDragging(false)
+        return
+      }
+    }
     const nextX = badgeDragRef.current.offsetX + dx
     const nextY = badgeDragRef.current.offsetY + dy
     const velocityX = (e.clientX - badgeDragRef.current.lastX) * 0.18
@@ -586,6 +624,15 @@ function App() {
   const closeCertModal = () => {
     setCertModalOpen(false)
     setSelectedCertificate(null)
+  }
+
+  const copyEmail = async () => {
+    try {
+      await navigator.clipboard.writeText('jerseysistonawrk@gmail.com')
+      setCopiedEmail(true)
+    } catch {
+      setCopiedEmail(false)
+    }
   }
 
   return (
@@ -934,11 +981,11 @@ function App() {
           <div className="contact-content">
             <p className="contact-subtitle">I'm always interested in hearing about new projects and opportunities.</p>
             <div className="contact-methods">
-              <a href="mailto:jerseysistonawrk@gmail.com" className="contact-card">
+              <button type="button" className="contact-card" onClick={copyEmail}>
                 <div className="contact-icon">✉</div>
                 <h3>Email</h3>
-                <p>jerseysistonawrk@gmail.com</p>
-              </a>
+                <p>{copiedEmail ? 'Email copied!' : 'jerseysistonawrk@gmail.com'}</p>
+              </button>
               <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card" target="_blank" rel="noopener noreferrer">
                 <div className="contact-icon">in</div>
                 <h3>LinkedIn</h3>

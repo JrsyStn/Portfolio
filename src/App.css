@@ -575,7 +575,7 @@ body::after {
   transform-origin: top center;
   opacity: 0;
   transform: translate3d(0, -70px, 0) rotate(-6deg) scale(0.96);
-  touch-action: none;
+  touch-action: pan-y;
   cursor: grab;
   user-select: none;
   overflow: visible;
@@ -622,6 +622,24 @@ body::after {
   box-shadow: 0 22px 55px rgba(0,0,0,0.24);
   animation: none;
   transition: box-shadow 0.2s ease;
+}
+
+@media (max-width: 768px) {
+  .about-badge-card {
+    width: min(100%, 280px);
+    padding: 0.5rem;
+  }
+
+  .about-badge-shell {
+    margin-top: 0.25rem;
+    padding: 1rem;
+    max-width: 100%;
+    transform: none !important;
+  }
+
+  .about-badge-shell.about-visible {
+    animation: badgeDrop 0.8s cubic-bezier(.2,.8,.2,1) both;
+  }
 }
 
 [data-theme="dark"] .about-badge-shell {
@@ -1391,6 +1409,8 @@ body::after {
   box-shadow: var(--shadow-sm);
   transition: all .3s ease;
   border: 1px solid var(--border);
+  cursor: pointer;
+  font: inherit;
 }
 
 .contact-card:hover {
@@ -1564,7 +1584,12 @@ body::after {
     text-align: center;
     gap: 2rem;
   }
-  .hero-image { justify-content: center; padding-right: 0; order: -1; }
+  .hero-text { order: 0; }
+  .hero-image {
+    justify-content: center;
+    padding-right: 0;
+    order: 1;
+  }
   .avatar-image { max-width: 220px; }
   .hero-buttons { justify-content: center; }
 
