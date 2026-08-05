@@ -817,19 +817,27 @@ body::after {
 .skill-card {
   flex: 0 0 auto;
   min-width: 180px;
-  background: var(--light);
-  border-radius: 16px;
+  background: transparent;
+  border-radius: 20px;
   padding: .9rem 1.2rem;
   display: flex;
   align-items: center;
   gap: .85rem;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
-  transition: transform .3s ease, box-shadow .3s ease;
+  border: 1px solid transparent;
+  box-shadow: none;
+  transition: transform .3s ease;
   cursor: default;
 }
 
-.skill-card:hover { transform: translateY(-5px); box-shadow: var(--shadow); }
+.skill-card.glass-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
+.skill-card:hover { transform: translateY(-5px); }
 
 /* The icon circle */
 .skill-icon {
@@ -1014,6 +1022,22 @@ body::after {
 }
 
 /* Each card */
+.glass-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease, background .3s ease;
+  background-clip: padding-box;
+}
+
+.glass-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 18px 42px rgba(0, 0, 0, 0.10);
+}
+
 .project-card {
   background: var(--bg-primary);
   border-radius: var(--radius-card);
@@ -1027,6 +1051,27 @@ body::after {
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease;
   height: 520px;
   min-height: 520px;
+}
+
+.project-card.glass-card,
+.cert-slide.glass-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 24px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  background-clip: padding-box;
+}
+
+.project-card.glass-card,
+.cert-slide.glass-card {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
 }
 
 .project-card:hover {
@@ -1114,17 +1159,6 @@ body::after {
   -webkit-line-clamp: 5;
   line-clamp: 5;
   align-self: start;
-}
-
-.project-description::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 1.4rem;
-  background: linear-gradient(180deg, rgba(255,255,255,0), var(--bg-primary));
-  pointer-events: none;
 }
 
 .project-tech {
@@ -1342,17 +1376,6 @@ body::after {
   line-clamp: 5;
 }
 
-.cert-slide-desc::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 2.8rem;
-  background: linear-gradient(180deg, rgba(255,255,255,0), var(--bg-primary) 85%);
-  pointer-events: none;
-}
-
 .cert-credly-btn {
   display: inline-flex;
   align-items: center;
@@ -1427,22 +1450,28 @@ body::after {
 }
 
 .contact-card {
-  background: var(--bg-primary);
+  background: transparent;
   padding: 2rem;
-  border-radius: 14px;
+  border-radius: 20px;
   text-decoration: none;
   color: var(--text);
-  box-shadow: var(--shadow-sm);
+  box-shadow: none;
   transition: all .3s ease;
-  border: 1px solid var(--border);
+  border: 1px solid transparent;
   cursor: pointer;
   font: inherit;
 }
 
+.contact-card.glass-card {
+  background: rgba(255, 255, 255, 0.10);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+}
+
 .contact-card:hover {
   transform: translateY(-8px);
-  box-shadow: var(--shadow);
-  border-color: var(--text);
 }
 
 .contact-icon {

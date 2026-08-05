@@ -838,7 +838,7 @@ function App() {
                 {skillCards.concat(skillCards).map((skill, idx) => (
                   <div
                     key={`${skill.name}-${idx}`}
-                    className="skill-card"
+                    className="skill-card glass-card"
                     data-reveal="up"
                     style={{ transitionDelay: `${idx * 70}ms` }}
                   >
@@ -900,7 +900,7 @@ function App() {
               return (
                 <div
                   key={`${project.id}-${idx}`}
-                  className={`project-card project-slide${isActive ? ' project-slide-active' : ''}`}
+                  className={`project-card glass-card project-slide${isActive ? ' project-slide-active' : ''}`}
                   data-reveal={idx % 2 === 0 ? 'left' : 'right'}
                   style={pCardWidth ? { width: `${pCardWidth}px`, transitionDelay: `${idx * 70}ms` } : { transitionDelay: `${idx * 70}ms` }}
                   onClick={() => {
@@ -970,7 +970,7 @@ function App() {
           <h2 className="section-title" data-reveal="up">Certificates</h2>
 
           <div className="cert-slider" onTouchStart={onCertTouchStart} onTouchEnd={onCertTouchEnd}>
-            <div className="cert-slide" key={activeCert.id} data-reveal="up">
+            <div className="cert-slide glass-card" key={activeCert.id} data-reveal="up">
               {/* Certificate image (or placeholder if no image) */}
               <div className="cert-preview" data-reveal="left">
                 {activeCert.image ? (
@@ -1041,17 +1041,17 @@ function App() {
           <div className="contact-content">
             <p className="contact-subtitle" data-reveal="up">I'm always interested in hearing about new projects and opportunities.</p>
             <div className="contact-methods">
-              <button type="button" className="contact-card" onClick={copyEmail} data-reveal="up" style={{ transitionDelay: '0ms' }}>
+              <button type="button" className="contact-card glass-card" onClick={copyEmail} data-reveal="up" style={{ transitionDelay: '0ms' }}>
                 <div className="contact-icon">✉</div>
                 <h3>Email</h3>
                 <p>{copiedEmail ? 'Email copied!' : 'jerseysistonawrk@gmail.com'}</p>
               </button>
-              <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '120ms' }}>
+              <a href="https://www.linkedin.com/in/jersey-sistona-1690a9409/" className="contact-card glass-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '120ms' }}>
                 <div className="contact-icon">in</div>
                 <h3>LinkedIn</h3>
                 <p>Connect with me</p>
               </a>
-              <a href="https://github.com/JrsyStn" className="contact-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '240ms' }}>
+              <a href="https://github.com/JrsyStn" className="contact-card glass-card" target="_blank" rel="noopener noreferrer" data-reveal="up" style={{ transitionDelay: '240ms' }}>
                 <div className="contact-icon">⚙</div>
                 <h3>GitHub</h3>
                 <p>View my projects</p>
