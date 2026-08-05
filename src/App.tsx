@@ -176,15 +176,6 @@ const certificates = [
     image: new URL('./assets/certificates/CCNAv7.png', import.meta.url).href,
     credlyLink: 'https://www.credly.com/users/jersey-sistona/edit#credly',
   },
-  {
-    id: 4,
-    title: 'CCNAv7: Introduction to Networks',
-    issuer: 'CISCO',
-    date: '2024',
-    description: 'This certificate demonstrates foundational networking knowledge, including IP addressing, Ethernet protocols, and configuring connectivity between switches, routers, and end devices, supported by hands-on experience through labs using Cisco hardware and Packet Tracer.',
-    image: new URL('', import.meta.url).href,
-    credlyLink: 'https://www.credly.com/users/jersey-sistona/edit#credly',
-  },
 ]
 
 
