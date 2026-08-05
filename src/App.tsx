@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import profileImage from './assets/profile.png'
+import aboutImage from './assets/toga.jpg'
 import './App.css'
 
 // ─────────────────────────────────────────────
@@ -799,7 +800,7 @@ function App() {
                   }}
                 >
                   <div className="badge-lace" style={laceStyle} />
-                  <img className="badge-photo" src={profileImage} alt="Jersey Sistona" />
+                  <img className="badge-photo" src={aboutImage} alt="Jersey Sistona" />
                   <div className="badge-line" />
                   <div className="badge-meta">
                     <span className="badge-name">Jersey Sistona</span>
