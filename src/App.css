@@ -1228,7 +1228,7 @@ body::before {
   min-height: clamp(420px, 60vh, 560px);
   padding: 1rem 0 2rem;
   perspective: 1600px;
-  overflow: visible;
+  overflow: hidden;
   display: flex;
   justify-content: center;
   align-items: flex-start;

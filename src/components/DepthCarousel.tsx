@@ -117,9 +117,26 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         const relIndex = idx - nextActive
         const abs = Math.abs(relIndex)
 
-        // Hide cards too far away
-        if (abs > visibleCards + 1) {
-          gsap.set(el, { autoAlpha: 0 })
+        const isHidden = abs > visibleCards + 1
+
+        if (isHidden) {
+          gsap.to(el, {
+            x: 0,
+            z: 0,
+            rotateY: 0,
+            scale: 0.45,
+            filter: 'none',
+            opacity: 0,
+            visibility: 'hidden',
+            display: 'none',
+            pointerEvents: 'none',
+            zIndex: 0,
+            autoAlpha: 0,
+            duration: animationDuration,
+            ease: animationEase,
+            overwrite: 'auto',
+            force3D: true,
+          })
           return
         }
 
@@ -141,6 +158,9 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
           filter: filterValue,
           opacity: isActive ? 1 : CONFIG.inactiveOpacity,
           zIndex,
+          visibility: 'visible',
+          display: 'block',
+          pointerEvents: 'auto',
           autoAlpha: 1,
           duration: animationDuration,
           ease: animationEase,
