@@ -916,34 +916,34 @@ function App() {
           </div>
         </div>
 
-        {/* Nav + dots inside container */}
+        {/* Navigation controls */}
         <div className="container">
           <div className="project-nav">
             <button
-              className="cert-arrow"
+              className="dc-arrow dc-arrow-prev"
               onClick={goPrev}
               aria-label="Previous project"
               disabled={atStart}
-              style={{ opacity: atStart ? 0.3 : 1, cursor: atStart ? 'not-allowed' : 'pointer' }}
-            >←</button>
-            <span className="project-counter">{currentIndex + 1} / {projects.length}</span>
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="15 18 9 12 15 6" />
+              </svg>
+            </button>
+
+            <div className="dc-indicator">
+              <span className="dc-counter">{currentIndex + 1} / {projects.length}</span>
+            </div>
+
             <button
-              className="cert-arrow"
+              className="dc-arrow dc-arrow-next"
               onClick={goNext}
               aria-label="Next project"
               disabled={atEnd}
-              style={{ opacity: atEnd ? 0.3 : 1, cursor: atEnd ? 'not-allowed' : 'pointer' }}
-            >→</button>
-          </div>
-          <div className="cert-dots" style={{ marginTop: '1rem' }}>
-            {projects.map((_, i) => (
-              <button
-                key={i}
-                className={`cert-dot${i === currentIndex ? ' cert-dot-active' : ''}`}
-                onClick={() => { if (!isAnimating) setCurrentIndex(i) }}
-                aria-label={`Go to project ${i + 1}`}
-              />
-            ))}
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+                <polyline points="9 18 15 12 9 6" />
+              </svg>
+            </button>
           </div>
         </div>
       </section>
