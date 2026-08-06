@@ -35,8 +35,8 @@ const CONFIG = {
   visibleCards: 2,   // how many cards each side of active to render
   blurStep: 2.5,     // blur added per card away from center (px)
   brightnessStep: 0.38, // brightness subtracted per card away from center
-  inactiveOpacity: 0.46, // opacity for cards that are not the active card
-  inactiveFilter: 'saturate(0.7) brightness(0.58)', // extra visual dimming for non-active cards
+  inactiveOpacity: 0.15, // opacity for cards that are not the active card
+  inactiveFilter: 'saturate(1) brightness(0.90)', // extra visual dimming for non-active cards
   scaleStep: 0.16,   // scale reduction per card away from center
   perspective: 1600, // CSS perspective (px)
   duration: 0.7,     // GSAP animation duration (s)
@@ -380,21 +380,9 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
           </svg>
         </button>
 
-        {/* Counter + dots */}
+        {/* Counter only */}
         <div className="dc-indicator">
           <span className="dc-counter">{activeIndex + 1} / {total}</span>
-          <div className="dc-dots" role="tablist">
-            {certificates.map((_, i) => (
-              <button
-                key={i}
-                className={`dc-dot${i === activeIndex ? ' dc-dot-active' : ''}`}
-                onClick={() => goTo(i)}
-                role="tab"
-                aria-selected={i === activeIndex}
-                aria-label={`Go to certificate ${i + 1}`}
-              />
-            ))}
-          </div>
         </div>
 
         <button
