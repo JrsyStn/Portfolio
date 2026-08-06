@@ -1232,6 +1232,8 @@ body::before {
   display: flex;
   justify-content: center;
   align-items: flex-start;
+  touch-action: pan-y;
+  user-select: none;
 }
 
 .dc-card {
@@ -1243,7 +1245,7 @@ body::before {
   transform-origin: center center;
   transform-style: preserve-3d;
   will-change: transform, filter, opacity;
-  transition: opacity .35s ease, filter .35s ease;
+  transition: opacity .38s ease, filter .38s ease;
 }
 
 .dc-card-face {
@@ -1263,6 +1265,21 @@ body::before {
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: box-shadow .35s ease, border-color .35s ease, background .35s ease, transform .35s ease;
+}
+
+.dc-card-active .dc-card-face {
+  background: rgba(255, 255, 255, 0.62);
+  border-color: rgba(17, 17, 17, 0.07);
+  box-shadow: 0 16px 36px rgba(0,0,0,.08), inset 0 1px 0 rgba(255,255,255,.28);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+[data-theme="dark"] .dc-card-active .dc-card-face {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: 0 16px 36px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.07);
 }
 
 .dc-card-face::before {
@@ -1478,6 +1495,19 @@ body::before {
   -webkit-backdrop-filter: blur(6px);
   transform: translateZ(0);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+}
+
+.dc-card-active .cert-info {
+  background: rgba(255,255,255,0.52);
+  border-color: rgba(17,17,17,0.06);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.18), 0 6px 14px rgba(0,0,0,0.04);
+}
+
+[data-theme="dark"] .dc-card-active .cert-info {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.05), 0 6px 14px rgba(0,0,0,0.12);
 }
 
 .cert-counter {

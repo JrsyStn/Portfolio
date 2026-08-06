@@ -35,12 +35,12 @@ const CONFIG = {
   visibleCards: 2,   // how many cards each side of active to render
   blurStep: 2.5,     // blur added per card away from center (px)
   brightnessStep: 0.38, // brightness subtracted per card away from center
-  inactiveOpacity: 0.15, // opacity for cards that are not the active card
+  inactiveOpacity: 0.18, // opacity for cards that are not the active card
   inactiveFilter: 'saturate(1) brightness(0.90)', // extra visual dimming for non-active cards
   scaleStep: 0.16,   // scale reduction per card away from center
   perspective: 1600, // CSS perspective (px)
-  duration: 0.7,     // GSAP animation duration (s)
-  ease: 'power3.out',
+  duration: 0.58,    // GSAP animation duration (s)
+  ease: 'power2.out',
   autoplayInterval: 4000, // ms
   autoAdvance: false, // disable automatic switching
 } as const
@@ -83,7 +83,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const stageWidthRef = useRef(0)
 
   // Drag tracking
-  const dragRef = useRef({ active: false, startX: 0, threshold: 50 })
+  const dragRef = useRef({ active: false, startX: 0, startY: 0, threshold: 46, moved: false })
   // Autoplay
   const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null)
   // Prevent click-after-drag
@@ -125,6 +125,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
           duration: CONFIG.duration,
           ease: CONFIG.ease,
           overwrite: 'auto',
+          force3D: true,
         })
       })
     },
@@ -164,8 +165,15 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
     [total]
   )
 
-  const goPrev = useCallback(() => goTo(activeIndex - 1), [activeIndex, goTo])
-  const goNext = useCallback(() => goTo(activeIndex + 1), [activeIndex, goTo])
+  const moveBy = useCallback(
+    (delta: number) => {
+      setActiveIndex(prev => Math.max(0, Math.min(total - 1, prev + delta)))
+    },
+    [total]
+  )
+
+  const goPrev = useCallback(() => moveBy(-1), [moveBy])
+  const goNext = useCallback(() => moveBy(1), [moveBy])
 
   const atStart = activeIndex === 0
   const atEnd = activeIndex === total - 1
@@ -193,30 +201,37 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
 
   // ── mouse drag ────────────────────────────────────────────────────────────
   const onPointerDown = useCallback((e: React.PointerEvent) => {
+    if (e.pointerType === 'touch') return
+
     const target = e.target as HTMLElement
     if (target.closest('button, a, input, textarea, select, [role="button"]')) {
       e.stopPropagation()
       return
     }
 
-    dragRef.current = { active: true, startX: e.clientX, threshold: 50 }
+    dragRef.current = { active: true, startX: e.clientX, startY: e.clientY, threshold: 46, moved: false }
     didDragRef.current = false
     setIsDragging(false)
     ;(e.currentTarget as HTMLElement).setPointerCapture(e.pointerId)
   }, [])
 
   const onPointerMove = useCallback((e: React.PointerEvent) => {
-    if (!dragRef.current.active) return
-    const dx = Math.abs(e.clientX - dragRef.current.startX)
-    if (dx > 8) setIsDragging(true)
+    if (e.pointerType === 'touch' || !dragRef.current.active) return
+    const dx = e.clientX - dragRef.current.startX
+    const dy = e.clientY - dragRef.current.startY
+    if (Math.abs(dx) > Math.abs(dy) + 8 && Math.abs(dx) > 8) {
+      dragRef.current.moved = true
+      setIsDragging(true)
+    }
   }, [])
 
   const onPointerUp = useCallback(
     (e: React.PointerEvent) => {
-      if (!dragRef.current.active) return
+      if (e.pointerType === 'touch' || !dragRef.current.active) return
       dragRef.current.active = false
       const dx = e.clientX - dragRef.current.startX
-      if (Math.abs(dx) >= dragRef.current.threshold) {
+      const dy = e.clientY - dragRef.current.startY
+      if (dragRef.current.moved && Math.abs(dx) >= dragRef.current.threshold && Math.abs(dx) > Math.abs(dy) + 10) {
         didDragRef.current = true
         if (dx < 0) goNext()
         else goPrev()
@@ -228,17 +243,30 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
 
   // ── touch swipe ───────────────────────────────────────────────────────────
   const touchStartX = useRef<number | null>(null)
+  const touchStartY = useRef<number | null>(null)
 
   const onTouchStart = useCallback((e: React.TouchEvent) => {
     touchStartX.current = e.touches[0].clientX
+    touchStartY.current = e.touches[0].clientY
+  }, [])
+
+  const onTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartX.current === null || touchStartY.current === null) return
+    const dx = e.touches[0].clientX - touchStartX.current
+    const dy = e.touches[0].clientY - touchStartY.current
+    if (Math.abs(dx) > Math.abs(dy) + 8 && Math.abs(dx) > 10) {
+      e.preventDefault()
+    }
   }, [])
 
   const onTouchEnd = useCallback(
     (e: React.TouchEvent) => {
-      if (touchStartX.current === null) return
+      if (touchStartX.current === null || touchStartY.current === null) return
       const dx = e.changedTouches[0].clientX - touchStartX.current
+      const dy = e.changedTouches[0].clientY - touchStartY.current
       touchStartX.current = null
-      if (Math.abs(dx) < 40) return
+      touchStartY.current = null
+      if (Math.abs(dx) < 38 || Math.abs(dx) < Math.abs(dy) + 10) return
       if (dx < 0) goNext()
       else goPrev()
     },
@@ -277,6 +305,7 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         onPointerUp={onPointerUp}
         onPointerCancel={onPointerUp}
         onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
         role="region"
         aria-label="Certificate carousel"
