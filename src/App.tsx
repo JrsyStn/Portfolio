@@ -796,8 +796,8 @@ function App() {
 
             <div className="about-description" data-reveal="right">
               <p className="about-desc-text">
-                I'm a Bachelor of Science in Information Technology graduate with experience in IT support, software development, system troubleshooting, and administrative operations. I enjoy building practical solutions, resolving technical challenges, and creating reliable, user-focused applications. Passionate about continuous learning, I'm always exploring new technologies to deliver efficient, high-quality results.
-                
+                I'm a Bachelor of Science in Information Technology graduate with experience in IT support, software and web development, system troubleshooting, and administrative operations. I enjoy building practical solutions, resolving technical challenges, and developing reliable, user-focused applications. Passionate about continuous learning, I'm always exploring new technologies to deliver efficient, high-quality results.
+
               </p>
             </div>
           </div>
