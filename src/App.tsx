@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react'
 import profileImage from './assets/profile.png'
 import aboutImage from './assets/toga.jpg'
+import DepthCarousel from './components/DepthCarousel'
 import './App.css'
 
 // ─────────────────────────────────────────────
@@ -184,7 +185,6 @@ const certificates = [
 function App() {
   const [activeSection, setActiveSection] = useState('home')
   const [theme, setTheme] = useState('light')
-  const [certIndex, setCertIndex] = useState(0)
   const [activeCategoryId, setActiveCategoryId] = useState(projectCategories[0].id)
   const [menuOpen, setMenuOpen] = useState(false)
   // Linear (non-looping) index: 0 to n-1
@@ -213,7 +213,6 @@ function App() {
   const skillTrackRef = useRef<HTMLDivElement | null>(null)
   const touchStartX = useRef<number | null>(null)
   const categorySwitchTimerRef = useRef<number | null>(null)
-  const certTouchStartX = useRef<number | null>(null)
   const badgeDragRef = useRef<{ active: boolean; startX: number; startY: number; offsetX: number; offsetY: number; lastX: number; lastY: number }>({
     active: false,
     startX: 0,
@@ -335,7 +334,7 @@ function App() {
       window.removeEventListener('scroll', handleScrollOrResize)
       window.removeEventListener('resize', handleScrollOrResize)
     }
-  }, [activeCategoryId, certIndex, activeSection, currentIndex, menuOpen, modalOpen, certModalOpen, isCategorySwitching])
+  }, [activeCategoryId, activeSection, currentIndex, menuOpen, modalOpen, certModalOpen, isCategorySwitching])
 
   useEffect(() => {
     if (isBadgeDragging) return
@@ -580,24 +579,6 @@ function App() {
     if (dx < 0) goNext()
     else goPrev()
   }
-
-  const prevCert = () => setCertIndex(i => (i - 1 + certificates.length) % certificates.length)
-  const nextCert = () => setCertIndex(i => (i + 1) % certificates.length)
-
-  const onCertTouchStart = (e: React.TouchEvent) => {
-    certTouchStartX.current = e.touches[0].clientX
-  }
-
-  const onCertTouchEnd = (e: React.TouchEvent) => {
-    if (certTouchStartX.current === null) return
-    const dx = e.changedTouches[0].clientX - certTouchStartX.current
-    certTouchStartX.current = null
-    if (Math.abs(dx) < 30) return
-    if (dx < 0) nextCert()
-    else prevCert()
-  }
-
-  const activeCert = certificates[certIndex]
 
   // Derive the active category's projects
   const activeCategory = projectCategories.find(c => c.id === activeCategoryId) ?? projectCategories[0]
@@ -967,73 +948,11 @@ function App() {
         </div>
       </section>
 
-      {/* ── Certificates – single-item slider ── */}
+      {/* ── Certificates – depth carousel ── */}
       <section id="certificates" className="certificates-section">
         <div className="container">
           <h2 className="section-title" data-reveal="up">Certificates</h2>
-
-          <div className="cert-slider" onTouchStart={onCertTouchStart} onTouchEnd={onCertTouchEnd}>
-            <div className="cert-slide glass-card" key={activeCert.id} data-reveal="up">
-              {/* Certificate image (or placeholder if no image) */}
-              <div className="cert-preview" data-reveal="left">
-                {activeCert.image ? (
-                  <>
-                    <img src={activeCert.image} alt={activeCert.title} className="cert-img" />
-                    <button
-                      type="button"
-                      className="cert-image-trigger"
-                      onClick={() => openCertModal(activeCert)}
-                      aria-label="View full certificate image"
-                    >
-                      View More
-                    </button>
-                  </>
-                ) : (
-                  <div className="cert-placeholder">
-                    <span className="cert-placeholder-icon">🏅</span>
-                    <span className="cert-placeholder-label">Certificate Preview</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Info */}
-              <div className="cert-info" data-reveal="right">
-                <h3 className="cert-slide-title">{activeCert.title}</h3>
-                <p className="cert-slide-issuer">{activeCert.issuer} · {activeCert.date}</p>
-                <p className="cert-slide-desc">{activeCert.description}</p>
-                <a
-                  href={activeCert.credlyLink}
-                  className="cert-credly-btn"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  View on Credly →
-                </a>
-              </div>
-            </div>
-
-            <div className="cert-nav-bottom">
-              <button
-                className="cert-arrow cert-arrow-bottom"
-                onClick={prevCert}
-                aria-label="Previous certificate"
-                disabled={certIndex === 0}
-                style={{ opacity: certIndex === 0 ? 0.3 : 1, cursor: certIndex === 0 ? 'not-allowed' : 'pointer' }}
-              >
-                ←
-              </button>
-              <span className="project-counter">{certIndex + 1} / {certificates.length}</span>
-              <button
-                className="cert-arrow cert-arrow-bottom"
-                onClick={nextCert}
-                aria-label="Next certificate"
-                disabled={certIndex === certificates.length - 1}
-                style={{ opacity: certIndex === certificates.length - 1 ? 0.3 : 1, cursor: certIndex === certificates.length - 1 ? 'not-allowed' : 'pointer' }}
-              >
-                →
-              </button>
-            </div>
-          </div>
+          <DepthCarousel certificates={certificates} onOpenLightbox={openCertModal} />
         </div>
       </section>
 

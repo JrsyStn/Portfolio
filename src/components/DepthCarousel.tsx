@@ -35,6 +35,8 @@ const CONFIG = {
   visibleCards: 2,   // how many cards each side of active to render
   blurStep: 2.5,     // blur added per card away from center (px)
   brightnessStep: 0.38, // brightness subtracted per card away from center
+  inactiveOpacity: 0.46, // opacity for cards that are not the active card
+  inactiveFilter: 'saturate(0.7) brightness(0.58)', // extra visual dimming for non-active cards
   scaleStep: 0.16,   // scale reduction per card away from center
   perspective: 1600, // CSS perspective (px)
   duration: 0.7,     // GSAP animation duration (s)
@@ -83,8 +85,6 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const dragRef = useRef({ active: false, startX: 0, threshold: 50 })
   // Autoplay
   const autoplayRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  // Wheel throttle
-  const wheelCooldownRef = useRef(false)
   // Prevent click-after-drag
   const didDragRef = useRef(false)
 
@@ -120,12 +120,18 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         const { translateX, translateZ, rotateY, scale, blur, brightness, zIndex } =
           getCardStyle(relIndex, w)
 
+        const isActive = relIndex === 0
+        const filterValue = isActive
+          ? `blur(${Math.max(0, blur - 1)}px) brightness(${Math.max(0.85, brightness + 0.08)})`
+          : `blur(${blur}px) brightness(${Math.max(0.2, brightness - 0.16)}) saturate(0.72)`
+
         gsap.to(el, {
           x: translateX,
           z: translateZ,
           rotateY,
           scale,
-          filter: `blur(${blur}px) brightness(${brightness})`,
+          filter: filterValue,
+          opacity: isActive ? 1 : CONFIG.inactiveOpacity,
           zIndex,
           autoAlpha: 1,
           duration: CONFIG.duration,
@@ -178,21 +184,14 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
     return () => window.removeEventListener('keydown', onKey)
   }, [goPrev, goNext])
 
-  // ── mouse wheel ───────────────────────────────────────────────────────────
-  const onWheel = useCallback(
-    (e: React.WheelEvent) => {
-      if (wheelCooldownRef.current) return
-      wheelCooldownRef.current = true
-      setTimeout(() => { wheelCooldownRef.current = false }, 600)
-
-      if (e.deltaY > 0 || e.deltaX > 0) goNext()
-      else goPrev()
-    },
-    [goPrev, goNext]
-  )
-
   // ── mouse drag ────────────────────────────────────────────────────────────
   const onPointerDown = useCallback((e: React.PointerEvent) => {
+    const target = e.target as HTMLElement
+    if (target.closest('button, a, input, textarea, select, [role="button"]')) {
+      e.stopPropagation()
+      return
+    }
+
     dragRef.current = { active: true, startX: e.clientX, threshold: 50 }
     didDragRef.current = false
     setIsDragging(false)
@@ -266,7 +265,6 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         ref={stageRef}
         className="dc-stage"
         style={{ perspective: `${CONFIG.perspective}px` }}
-        onWheel={onWheel}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
         onPointerUp={onPointerUp}
@@ -306,48 +304,55 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
               }}
             >
               {/* ── Card Face ── */}
-              <div className="dc-card-face">
-                {/* Certificate image — always visible */}
-                <div className="dc-card-image-wrap">
+              <div className="dc-card-face cert-slide glass-card">
+                <div className="cert-preview" data-reveal="left">
                   {cert.image ? (
-                    <img
-                      src={cert.image}
-                      alt={cert.title}
-                      className="dc-card-img"
-                      loading="lazy"
-                      draggable={false}
-                    />
+                    <>
+                      <img
+                        src={cert.image}
+                        alt={cert.title}
+                        className="cert-img"
+                        loading="lazy"
+                        draggable={false}
+                      />
+                      {isActive && (
+                        <button
+                          type="button"
+                          className="cert-image-trigger"
+                          onMouseDown={(e) => e.stopPropagation()}
+                          onPointerDown={(e) => e.stopPropagation()}
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            onOpenLightbox(cert)
+                          }}
+                          aria-label={`View full certificate image for ${cert.title}`}
+                        >
+                          View More
+                        </button>
+                      )}
+                    </>
                   ) : (
-                    <div className="dc-card-placeholder">
-                      <span className="dc-placeholder-icon">🏅</span>
-                    </div>
-                  )}
-
-                  {/* Active-only: click-to-view overlay */}
-                  {isActive && (
-                    <div className="dc-card-overlay" aria-hidden="true">
-                      <span className="dc-card-view-label">View Certificate</span>
+                    <div className="cert-placeholder">
+                      <span className="cert-placeholder-icon">🏅</span>
+                      <span className="cert-placeholder-label">Certificate Preview</span>
                     </div>
                   )}
                 </div>
 
-                {/* Info — only on the active card */}
-                {isActive && (
-                  <div className="dc-card-info">
-                    <h3 className="dc-card-title">{cert.title}</h3>
-                    <p className="dc-card-issuer">{cert.issuer} · {cert.date}</p>
-                    <p className="dc-card-desc">{cert.description}</p>
-                    <a
-                      href={cert.credlyLink}
-                      className="dc-card-credly"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      onClick={e => e.stopPropagation()}
-                    >
-                      View on Credly →
-                    </a>
-                  </div>
-                )}
+                <div className="cert-info" data-reveal="right">
+                  <h3 className="cert-slide-title">{cert.title}</h3>
+                  <p className="cert-slide-issuer">{cert.issuer} · {cert.date}</p>
+                  <p className="cert-slide-desc">{cert.description}</p>
+                  <a
+                    href={cert.credlyLink}
+                    className="cert-credly-btn"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={e => e.stopPropagation()}
+                  >
+                    View on Credly →
+                  </a>
+                </div>
               </div>
             </div>
           )
@@ -398,10 +403,6 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         </button>
       </div>
 
-      {/* ── Autoplay status (screen-reader) ── */}
-      <div className="sr-only" aria-live="polite" aria-atomic="true">
-        {certificates[activeIndex]?.title}
-      </div>
     </div>
   )
 }
