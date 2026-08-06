@@ -35,7 +35,7 @@ const CONFIG = {
   visibleCards: 2,   // how many cards each side of active to render
   blurStep: 2.5,     // blur added per card away from center (px)
   brightnessStep: 0.38, // brightness subtracted per card away from center
-  inactiveOpacity: 0.18, // opacity for cards that are not the active card
+  inactiveOpacity: 0.02, // opacity for cards that are not the active card
   inactiveFilter: 'saturate(1) brightness(0.90)', // extra visual dimming for non-active cards
   scaleStep: 0.16,   // scale reduction per card away from center
   perspective: 1600, // CSS perspective (px)
@@ -43,21 +43,35 @@ const CONFIG = {
   ease: 'power2.out',
   autoplayInterval: 4000, // ms
   autoAdvance: false, // disable automatic switching
+  mobileBreakpoint: 900,
+  mobile: {
+    depth: 180,
+    spreadX: 44,
+    tilt: 12,
+    visibleCards: 1,
+    blurStep: 1.1,
+    brightnessStep: 0.24,
+    scaleStep: 0.10,
+    perspective: 1200,
+    duration: 0.42,
+    ease: 'power1.out',
+  },
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Helper — compute 3D style for a given relative index
 // ─────────────────────────────────────────────────────────────────────────────
-function getCardStyle(relIndex: number, stageWidth: number) {
+function getCardStyle(relIndex: number, stageWidth: number, compact: boolean) {
   const abs = Math.abs(relIndex)
   const sign = Math.sign(relIndex)
+  const cfg = compact ? CONFIG.mobile : CONFIG
 
-  const translateZ = -CONFIG.depth * abs
-  const translateXPct = CONFIG.spreadX * sign * abs
-  const rotateY = -CONFIG.tilt * sign * Math.min(abs, 2)
-  const scale = Math.max(0.4, 1 - CONFIG.scaleStep * abs)
-  const blur = CONFIG.blurStep * abs
-  const brightness = Math.max(0.15, 1 - CONFIG.brightnessStep * abs)
+  const translateZ = -cfg.depth * abs
+  const translateXPct = cfg.spreadX * sign * abs
+  const rotateY = -cfg.tilt * sign * Math.min(abs, 2)
+  const scale = Math.max(0.45, 1 - cfg.scaleStep * abs)
+  const blur = cfg.blurStep * abs
+  const brightness = Math.max(0.28, 1 - cfg.brightnessStep * abs)
   const zIndex = 100 - abs * 20
 
   // Convert % spread to px so GSAP can tween it
@@ -93,6 +107,10 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const animateCards = useCallback(
     (nextActive: number) => {
       const w = stageWidthRef.current || 800
+      const compact = w <= CONFIG.mobileBreakpoint
+      const visibleCards = compact ? CONFIG.mobile.visibleCards : CONFIG.visibleCards
+      const animationDuration = compact ? CONFIG.mobile.duration : CONFIG.duration
+      const animationEase = compact ? CONFIG.mobile.ease : CONFIG.ease
 
       cardRefs.current.forEach((el, idx) => {
         if (!el) return
@@ -100,18 +118,20 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
         const abs = Math.abs(relIndex)
 
         // Hide cards too far away
-        if (abs > CONFIG.visibleCards + 1) {
+        if (abs > visibleCards + 1) {
           gsap.set(el, { autoAlpha: 0 })
           return
         }
 
         const { translateX, translateZ, rotateY, scale, blur, brightness, zIndex } =
-          getCardStyle(relIndex, w)
+          getCardStyle(relIndex, w, compact)
 
         const isActive = relIndex === 0
         const filterValue = isActive
           ? 'none'
-          : `blur(${Math.max(0.4, blur * 0.5)}px) brightness(${Math.max(0.22, brightness - 0.18)}) saturate(0.72)`
+          : compact
+            ? `brightness(${Math.max(0.55, brightness - 0.15)}) saturate(0.78)`
+            : `blur(${Math.max(0.4, blur * 0.5)}px) brightness(${Math.max(0.22, brightness - 0.18)}) saturate(0.72)`
 
         gsap.to(el, {
           x: translateX,
@@ -122,8 +142,8 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
           opacity: isActive ? 1 : CONFIG.inactiveOpacity,
           zIndex,
           autoAlpha: 1,
-          duration: CONFIG.duration,
-          ease: CONFIG.ease,
+          duration: animationDuration,
+          ease: animationEase,
           overwrite: 'auto',
           force3D: true,
         })

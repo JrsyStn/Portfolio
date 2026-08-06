@@ -1245,7 +1245,7 @@ body::before {
   transform-origin: center center;
   transform-style: preserve-3d;
   will-change: transform, filter, opacity;
-  transition: opacity .38s ease, filter .38s ease;
+  transition: opacity .32s ease, filter .32s ease;
 }
 
 .dc-card-face {
@@ -1253,19 +1253,19 @@ body::before {
   min-height: clamp(360px, 44vh, 430px);
   border-radius: 28px;
   padding: clamp(1.25rem, 2.3vw, 2.5rem);
-  box-shadow: 0 16px 36px rgba(0,0,0,.06);
+  box-shadow: 0 14px 28px rgba(0,0,0,.05);
   position: relative;
   isolation: isolate;
   overflow: hidden;
-  background: linear-gradient(135deg, rgba(255,255,255,0.16), rgba(255,255,255,0.08));
-  border: 1px solid rgba(255,255,255,0.18);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  background: linear-gradient(135deg, rgba(255,255,255,0.14), rgba(255,255,255,0.08));
+  border: 1px solid rgba(255,255,255,0.16);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transform: translateZ(0);
   backface-visibility: hidden;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: box-shadow .35s ease, border-color .35s ease, background .35s ease, transform .35s ease;
+  transition: box-shadow .26s ease, border-color .26s ease, background .26s ease, transform .26s ease;
 }
 
 .dc-card-active .dc-card-face {
@@ -1491,11 +1491,11 @@ body::before {
   border: 1px solid var(--cert-info-border);
   border-radius: 18px;
   padding: 1rem 1.1rem;
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   transform: translateZ(0);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
-  transition: background .3s ease, border-color .3s ease, box-shadow .3s ease;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+  transition: background .24s ease, border-color .24s ease, box-shadow .24s ease;
 }
 
 .dc-card-active .cert-info {
@@ -1822,6 +1822,22 @@ body::before {
 @media (max-width: 768px) {
   .container {
     padding: 0 1rem;
+  }
+
+  /* Certificates performance improvements */
+  .dc-stage {
+    perspective: 1200px;
+  }
+  .dc-card {
+    transition: opacity .24s ease, filter .24s ease;
+  }
+  .dc-card-face {
+    box-shadow: 0 12px 22px rgba(0,0,0,.05);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+  .cert-img {
+    transition: transform .24s ease;
   }
 
   /* Hero */
