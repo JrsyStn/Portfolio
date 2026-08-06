@@ -176,6 +176,8 @@ const certificates = [
     image: new URL('./assets/certificates/CCNAv7.png', import.meta.url).href,
     credlyLink: 'https://www.credly.com/users/jersey-sistona/edit#credly',
   },
+
+
 ]
 
 
@@ -229,9 +231,10 @@ function App() {
   })
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('theme') || 'light'
-    setTheme(savedTheme)
-    document.documentElement.setAttribute('data-theme', savedTheme)
+    const forced = 'dark'
+    setTheme(forced)
+    try { localStorage.setItem('theme', forced) } catch (e) { /* ignore */ }
+    document.documentElement.setAttribute('data-theme', forced)
   }, [])
 
   useEffect(() => {
