@@ -42,6 +42,7 @@ const CONFIG = {
   duration: 0.7,     // GSAP animation duration (s)
   ease: 'power3.out',
   autoplayInterval: 4000, // ms
+  autoAdvance: false, // disable automatic switching
 } as const
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -88,19 +89,6 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   // Prevent click-after-drag
   const didDragRef = useRef(false)
 
-  // ── measure stage ─────────────────────────────────────────────────────────
-  useLayoutEffect(() => {
-    const measure = () => {
-      if (stageRef.current) {
-        stageWidthRef.current = stageRef.current.offsetWidth
-      }
-    }
-    measure()
-    const ro = new ResizeObserver(measure)
-    if (stageRef.current) ro.observe(stageRef.current)
-    return () => ro.disconnect()
-  }, [])
-
   // ── animate cards whenever activeIndex changes ────────────────────────────
   const animateCards = useCallback(
     (nextActive: number) => {
@@ -122,8 +110,8 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
 
         const isActive = relIndex === 0
         const filterValue = isActive
-          ? `blur(${Math.max(0, blur - 1)}px) brightness(${Math.max(0.85, brightness + 0.08)})`
-          : `blur(${blur}px) brightness(${Math.max(0.2, brightness - 0.16)}) saturate(0.72)`
+          ? 'none'
+          : `blur(${Math.max(0.4, blur * 0.5)}px) brightness(${Math.max(0.22, brightness - 0.18)}) saturate(0.72)`
 
         gsap.to(el, {
           x: translateX,
@@ -142,6 +130,25 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
     },
     []
   )
+
+  // ── measure stage ─────────────────────────────────────────────────────────
+  useLayoutEffect(() => {
+    const measure = () => {
+      if (stageRef.current) {
+        stageWidthRef.current = stageRef.current.offsetWidth
+      }
+      window.requestAnimationFrame(() => animateCards(activeIndex))
+    }
+
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (stageRef.current) ro.observe(stageRef.current)
+    window.addEventListener('resize', measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [activeIndex, animateCards])
 
   // Run on mount and whenever activeIndex changes
   useEffect(() => {
@@ -163,9 +170,9 @@ const DepthCarousel: React.FC<DepthCarouselProps> = ({
   const atStart = activeIndex === 0
   const atEnd = activeIndex === total - 1
 
-  // ── autoplay ──────────────────────────────────────────────────────────────
+  // ── autoplay disabled ───────────────────────────────────────────────────
   useEffect(() => {
-    if (paused || total <= 1) return
+    if (!CONFIG.autoAdvance || paused || total <= 1) return
     autoplayRef.current = setInterval(() => {
       setActiveIndex(prev => (prev + 1) % total)
     }, CONFIG.autoplayInterval)
