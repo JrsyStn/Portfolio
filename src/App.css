@@ -14,9 +14,14 @@
   --border:        #d9d9d9;
   --shadow:        0 10px 30px rgba(0,0,0,.12);
   --shadow-sm:     0 2px 8px  rgba(0,0,0,.06);
-  --bg-primary:    #ffffff;
-  --bg-secondary:  #f3f3f3;
+  --bg-primary:    #f7f7f5;
+  --bg-secondary:  #efeee9;
   --radius-card:   20px;
+  --surface-glass: rgba(255, 255, 255, 0.72);
+  --surface-glass-strong: rgba(255, 255, 255, 0.86);
+  --overlay-dim: rgba(15, 15, 15, 0.04);
+  --cert-info-bg: rgba(255, 255, 255, 0.92);
+  --cert-info-border: rgba(17, 17, 17, 0.08);
 }
 
 [data-theme="dark"] {
@@ -34,6 +39,8 @@
   --shadow-sm:     0 2px 8px  rgba(0,0,0,.25);
   --bg-primary:    #000000;
   --bg-secondary:  #121212;
+  --cert-info-bg: rgba(10, 12, 18, 0.36);
+  --cert-info-border: rgba(255, 255, 255, 0.12);
 }
 
 /* ═══════════════════════════════════════
@@ -74,8 +81,16 @@ body::after {
   inset: -12%;
   background:
     linear-gradient(120deg, rgba(255,255,255,0.16), rgba(255,255,255,0.04), rgba(255,255,255,0.12));
-  opacity: 0.86;
+  opacity: 0.55;
   z-index: -1;
+}
+
+body::before {
+  background:
+    radial-gradient(circle at 10% 20%, rgba(255, 110, 182, 0.16), transparent 24%),
+    radial-gradient(circle at 80% 15%, rgba(97, 164, 255, 0.14), transparent 26%),
+    radial-gradient(circle at 50% 90%, rgba(255, 210, 120, 0.12), transparent 30%);
+  opacity: 0.9;
 }
 
 .app {
@@ -796,7 +811,7 @@ body::after {
 }
 
 [data-theme="dark"] .about-skills {
-  background: rgba(255,255,255,0.03);
+  background: rgba(255,255,255,0.02);
 }
 
 .skills-carousel {
@@ -832,11 +847,17 @@ body::after {
 }
 
 .skill-card.glass-card {
-  background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+  background: rgba(255, 255, 255, 0.06);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.18);
+}
+
+[data-theme="dark"] .skill-card.glass-card {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.24);
 }
 
 .skill-card:hover { transform: translateY(-5px); }
@@ -864,7 +885,7 @@ body::after {
 .skill-name {
   font-weight: 700;
   font-size: .9rem;
-  color: var(--dark);
+  color: var(--text);
   white-space: nowrap;
 }
 
@@ -1000,7 +1021,7 @@ body::after {
 
 /* Side cards get a subtle hover lift */
 .project-slide:not(.project-slide-active):hover {
-  opacity: 0.75;
+  opacity: 0.82;
 }
 
 /* Navigation row */
@@ -1025,12 +1046,12 @@ body::after {
 
 /* Each card */
 .glass-card {
-  background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--surface-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(17, 17, 17, 0.08);
   border-radius: 24px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
   transition: transform .3s ease, box-shadow .3s ease, border-color .3s ease, background .3s ease;
   background-clip: padding-box;
 }
@@ -1057,12 +1078,12 @@ body::after {
 
 .project-card.glass-card,
 .cert-slide.glass-card {
-  background: rgba(255, 255, 255, 0.10);
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: var(--surface-glass);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(17, 17, 17, 0.08);
   border-radius: 24px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
   background-clip: padding-box;
 }
 
@@ -1449,13 +1470,14 @@ body::after {
   gap: .85rem;
   min-height: 0;
   align-content: start;
-  background: rgba(10, 12, 18, 0.16);
-  border: 1px solid rgba(255,255,255,0.18);
+  background: var(--cert-info-bg);
+  border: 1px solid var(--cert-info-border);
   border-radius: 18px;
   padding: 1rem 1.1rem;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
   transform: translateZ(0);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
 }
 
 .cert-counter {
