@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import profileImage from './assets/profile.png'
-import aboutImage from './assets/toga.jpg'
+import profileImage from './assets/toga.jpg'
+import aboutImage from './assets/profile.png'
 import DepthCarousel from './components/DepthCarousel'
 import './App.css'
 
